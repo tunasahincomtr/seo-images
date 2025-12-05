@@ -77,7 +77,7 @@ php -m | grep imagick
 ### 1. Paketi Yükleyin
 
 ```bash
-composer require tunasahin/seo-images
+composer require tunasahincomtr/seo-images:dev-main
 ```
 
 ### 2. Service Provider'ı Kaydedin
