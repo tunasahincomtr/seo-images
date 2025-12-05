@@ -1,0 +1,662 @@
+/* SEO Images Styles - CSS Variables kullanılıyor */
+/* Renkleri ve diğer ayarları buradan değiştirebilirsiniz */
+
+:root {
+    /* Tema Renkleri */
+    --seo-images-primary: #7d2c2c;
+    --seo-images-success: #28a745;
+    --seo-images-danger: #dc3545;
+    --seo-images-warning: #ffc107;
+    --seo-images-info: #17a2b8;
+    --seo-images-light: #f8f9fa;
+    --seo-images-dark: #343a40;
+
+    /* Stil Ayarları */
+    --seo-images-border-radius: 8px;
+    --seo-images-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.seo-image-input-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.seo-image-multiple {
+    flex-direction: column;
+}
+
+.seo-image-selected-list {
+    width: 100%;
+    margin-top: 15px;
+}
+
+.selected-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.selected-images-sortable {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.selected-image-item {
+    position: relative;
+    border: 2px solid var(--seo-images-primary, #007bff);
+    border-radius: var(--seo-images-border-radius, 8px);
+    overflow: hidden;
+    background: #fff;
+    cursor: move;
+    transition: all 0.2s ease;
+}
+
+.selected-image-item:hover {
+    transform: scale(1.05);
+    box-shadow: var(--seo-images-box-shadow, 0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.selected-image-item.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.selected-image-item.drag-over {
+    border-color: var(--seo-images-success, #28a745);
+    border-width: 3px;
+}
+
+.selected-image-item img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+}
+
+.selected-image-item .remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--seo-images-danger, #dc3545);
+    opacity: 0.9;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+
+.selected-image-item .remove-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.image-item.multiple-mode {
+    position: relative;
+}
+
+.image-item.multiple-mode .image-checkbox {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 24px;
+    height: 24px;
+    z-index: 10;
+    cursor: pointer;
+    accent-color: var(--seo-images-primary, #007bff);
+    background: white;
+    border-radius: 4px;
+}
+
+.image-item.multiple-mode.selected {
+    border-color: var(--seo-images-primary, #007bff);
+    border-width: 3px;
+}
+
+.seo-image-input {
+    flex: 1;
+}
+
+.seo-image-preview img {
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Upload Area */
+.upload-area {
+    border: 2px dashed #ccc;
+    border-radius: var(--seo-images-border-radius, 8px);
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-area:hover {
+    border-color: var(--seo-images-primary, #007bff);
+    background-color: var(--seo-images-light, #f8f9fa);
+}
+
+.upload-area.dragover {
+    border-color: var(--seo-images-primary, #007bff);
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.upload-content svg {
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.upload-content p {
+    margin: 0;
+    color: #6c757d;
+}
+
+/* Image Grid */
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.image-item {
+    position: relative;
+    border: 2px solid #ddd;
+    border-radius: var(--seo-images-border-radius, 8px);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.image-item:hover {
+    border-color: var(--seo-images-primary, #007bff);
+    transform: translateY(-2px);
+    box-shadow: var(--seo-images-box-shadow, 0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+.image-item.selected {
+    border-color: var(--seo-images-primary, #007bff);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.image-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Silme Butonu - Resmin Üstünde Sağ Üst */
+.image-item-delete {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 28px;
+    height: 28px;
+    background: var(--seo-images-danger, #dc3545);
+    opacity: 0.9;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 5;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.image-item:hover .image-item-delete {
+    opacity: 0.9;
+}
+
+.image-item-delete:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.image-item-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-item:hover .image-item-overlay {
+    opacity: 1;
+}
+
+.image-item-info {
+    padding: 8px;
+    background: white;
+    font-size: 12px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+}
+
+/* Yükleme Progress Container */
+.upload-progress-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 15px;
+}
+
+.upload-progress-item {
+    background: #fff;
+    border: 2px solid #dee2e6;
+    border-radius: var(--seo-images-border-radius, 8px);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.upload-progress-item.upload-complete {
+    border-color: var(--seo-images-success, #28a745);
+    animation: uploadSuccess 0.5s ease;
+}
+
+.upload-progress-item.upload-error {
+    border-color: var(--seo-images-danger, #dc3545);
+}
+
+@keyframes uploadSuccess {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.upload-preview {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.upload-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.upload-progress-item.upload-complete .upload-preview img {
+    opacity: 1;
+}
+
+.upload-info {
+    padding: 12px;
+}
+
+.upload-filename {
+    font-size: 12px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.upload-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+    position: relative;
+}
+
+.upload-progress-fill {
+    height: 100%;
+    background: var(--seo-images-primary, #007bff);
+    border-radius: 3px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent);
+    animation: progressShine 1.5s infinite;
+}
+
+@keyframes progressShine {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.upload-status {
+    font-size: 11px;
+    color: #6c757d;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Modal Backdrop Fix */
+.modal-backdrop {
+    z-index: 1040;
+}
+
+.modal {
+    z-index: 1050;
+}
+
+/* Fullscreen Modal Stilleri */
+#seoImageModal.modal-fullscreen .modal-content {
+    height: 100vh;
+    border: 0;
+    border-radius: 0;
+}
+
+#seoImageModal.modal-fullscreen .modal-body {
+    height: calc(100vh - 120px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#seoImageModal.modal-fullscreen .modal-body .row {
+    height: 100%;
+    margin: 0;
+}
+
+#seoImageModal.modal-fullscreen .modal-body .col-md-8,
+#seoImageModal.modal-fullscreen .modal-body .col-md-4 {
+    height: 100%;
+    overflow-y: auto;
+    padding: 0;
+}
+
+#seoImageModal.modal-fullscreen .modal-header {
+    border-bottom: 1px solid #dee2e6;
+    padding: 1rem 1.5rem;
+}
+
+#seoImageModal.modal-fullscreen .modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem 1.5rem;
+}
+
+/* Sağ Panel Stilleri */
+#imageDetailsPanel {
+    border-left: 1px solid #dee2e6;
+}
+
+#imageDetailsPanel h6 {
+    color: #495057;
+    font-weight: 600;
+}
+
+#selectedImagePreview {
+    border: 2px solid #dee2e6;
+    padding: 5px;
+    background: #fff;
+}
+
+/* Buton Stilleri - SEO Images için özel renkler */
+.seo-image-select-btn.btn-primary,
+.seo-image-select-btn.btn-primary:hover,
+.seo-image-select-btn.btn-primary:focus,
+.seo-image-select-btn.btn-primary:active {
+    background-color: var(--seo-images-primary) !important;
+    border-color: var(--seo-images-primary) !important;
+    color: #fff !important;
+}
+
+.seo-image-select-btn.btn-primary:hover {
+    background-color: var(--seo-images-primary) !important;
+    border-color: var(--seo-images-primary) !important;
+    opacity: 0.9;
+    filter: brightness(1.1);
+}
+
+.seo-image-remove-btn.btn-danger,
+.seo-image-remove-btn.btn-danger:hover,
+.seo-image-remove-btn.btn-danger:focus,
+.seo-image-remove-btn.btn-danger:active {
+    background-color: var(--seo-images-danger) !important;
+    border-color: var(--seo-images-danger) !important;
+    color: #fff !important;
+}
+
+.seo-image-clear-all-btn.btn-danger,
+.seo-image-clear-all-btn.btn-danger:hover,
+.seo-image-clear-all-btn.btn-danger:focus,
+.seo-image-clear-all-btn.btn-danger:active {
+    background-color: var(--seo-images-danger) !important;
+    border-color: var(--seo-images-danger) !important;
+    color: #fff !important;
+}
+
+/* Modal içindeki butonlar */
+#seoImageModal .btn-primary,
+#seoImageModal .btn-primary:hover,
+#seoImageModal .btn-primary:focus,
+#seoImageModal .btn-primary:active {
+    background-color: var(--seo-images-primary) !important;
+    border-color: var(--seo-images-primary) !important;
+    color: #fff !important;
+}
+
+#seoImageModal .btn-success,
+#seoImageModal .btn-success:hover,
+#seoImageModal .btn-success:focus,
+#seoImageModal .btn-success:active {
+    background-color: var(--seo-images-success) !important;
+    border-color: var(--seo-images-success) !important;
+    color: #fff !important;
+}
+
+#seoImageModal .btn-danger,
+#seoImageModal .btn-danger:hover,
+#seoImageModal .btn-danger:focus,
+#seoImageModal .btn-danger:active {
+    background-color: var(--seo-images-danger) !important;
+    border-color: var(--seo-images-danger) !important;
+    color: #fff !important;
+}
+
+#seoImageModal #updateImageBtn.btn-primary,
+#seoImageModal #updateImageBtn.btn-primary:hover,
+#seoImageModal #updateImageBtn.btn-primary:focus,
+#seoImageModal #updateImageBtn.btn-primary:active {
+    background-color: var(--seo-images-primary) !important;
+    border-color: var(--seo-images-primary) !important;
+    color: #fff !important;
+}
+
+#seoImageModal #deleteSelectedImageBtn.btn-danger,
+#seoImageModal #deleteSelectedImageBtn.btn-danger:hover,
+#seoImageModal #deleteSelectedImageBtn.btn-danger:focus,
+#seoImageModal #deleteSelectedImageBtn.btn-danger:active {
+    background-color: var(--seo-images-danger) !important;
+    border-color: var(--seo-images-danger) !important;
+    color: #fff !important;
+}
+
+#seoImageModal #selectImageBtn.btn-primary,
+#seoImageModal #selectImageBtn.btn-primary:hover,
+#seoImageModal #selectImageBtn.btn-primary:focus,
+#seoImageModal #selectImageBtn.btn-primary:active {
+    background-color: var(--seo-images-primary) !important;
+    border-color: var(--seo-images-primary) !important;
+    color: #fff !important;
+}
+
+#seoImageModal #selectMultipleImagesBtn.btn-success,
+#seoImageModal #selectMultipleImagesBtn.btn-success:hover,
+#seoImageModal #selectMultipleImagesBtn.btn-success:focus,
+#seoImageModal #selectMultipleImagesBtn.btn-success:active {
+    background-color: var(--seo-images-success) !important;
+    border-color: var(--seo-images-success) !important;
+    color: #fff !important;
+}
+
+/* Badge stilleri */
+#seoImageModal .badge.bg-primary {
+    background-color: var(--seo-images-primary) !important;
+    color: #fff !important;
+}
+
+/* Arama Kutusu Stilleri */
+#imageSearchInput {
+    border-color: #dee2e6;
+}
+
+#imageSearchInput:focus {
+    border-color: var(--seo-images-primary, #007bff);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+#clearSearchBtn {
+    border-color: #dee2e6;
+}
+
+#clearSearchBtn:hover {
+    background-color: var(--seo-images-danger, #dc3545);
+    border-color: var(--seo-images-danger, #dc3545);
+    color: #fff;
+}
+
+/* Daha Fazla Göster Butonu */
+#loadMoreContainer {
+    border-top: 1px solid #dee2e6;
+    background: #f8f9fa;
+}
+
+#loadMoreBtn {
+    min-width: 200px;
+    padding: 10px 30px;
+    font-weight: 500;
+}
+
+#loadMoreBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Silme Onay Popover */
+.delete-confirm-popover {
+    position: absolute;
+    z-index: 1060;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: var(--seo-images-border-radius, 8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 280px;
+    max-width: 320px;
+    animation: popoverFadeIn 0.2s ease;
+}
+
+@keyframes popoverFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.delete-confirm-content {
+    padding: 16px;
+}
+
+.delete-confirm-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    color: var(--seo-images-danger, #dc3545);
+}
+
+.delete-confirm-header svg {
+    flex-shrink: 0;
+}
+
+.delete-confirm-header h6 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.delete-confirm-content p {
+    margin: 0 0 16px 0;
+    color: #6c757d;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.delete-confirm-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.delete-confirm-actions .btn {
+    min-width: 80px;
+}
