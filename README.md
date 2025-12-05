@@ -922,7 +922,7 @@ MIT License - Detaylar için `LICENSE` dosyasına bakın.
 
 **Tuna Şahin**
 
--   Email: tunasahin@example.com
+-   Email: h.tunasahn@gmail.com
 
 ---
 
