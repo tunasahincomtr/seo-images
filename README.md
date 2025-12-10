@@ -46,7 +46,7 @@ Laravel projelerinde kullanılacak, tam çalışan, stabil bir medya kütüphane
 ### 1. Paketi Yükleyin
 
 ```bash
-composer require tunasahin/seo-images
+composer require tunasahincomtr/seo-images:dev-main
 ```
 
 Eğer paket local development için kullanılıyorsa, `composer.json` dosyanıza repository ekleyin:
