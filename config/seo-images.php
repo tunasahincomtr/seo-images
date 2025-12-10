@@ -6,72 +6,78 @@ return [
     | Storage Disk
     |--------------------------------------------------------------------------
     |
-    | Resimlerin kaydedileceği storage disk'i
+    | Laravel storage disk adı. Varsayılan olarak 'public' kullanılır.
     |
     */
     'disk' => env('SEO_IMAGES_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------
+    | Image Sizes
+    |--------------------------------------------------------------------------
+    |
+    | Üretilecek görsel boyutları (genişlik piksel cinsinden).
+    |
+    */
+    'sizes' => [480, 768, 1200, 1920],
+
+    /*
+    |--------------------------------------------------------------------------
     | Image Quality
     |--------------------------------------------------------------------------
     |
-    | Resim formatlarına çevirirken kullanılacak kalite (1-100)
+    | Her format için kalite ayarları (0-100 arası).
     |
     */
-    'quality' => env('SEO_IMAGES_QUALITY', 90),
+    'quality_jpg' => env('SEO_IMAGES_QUALITY_JPG', 80),
+    'quality_webp' => env('SEO_IMAGES_QUALITY_WEBP', 80),
+    'quality_avif' => env('SEO_IMAGES_QUALITY_AVIF', 60),
 
     /*
     |--------------------------------------------------------------------------
-    | Max File Size
+    | Route Middleware
     |--------------------------------------------------------------------------
     |
-    | Yüklenebilecek maksimum dosya boyutu (KB)
+    | API route'ları için kullanılacak middleware'ler.
     |
     */
-    'max_file_size' => env('SEO_IMAGES_MAX_SIZE', 10240), // 10MB
+    'route_middleware' => ['web', 'auth'],
 
     /*
     |--------------------------------------------------------------------------
-    | Multiple Images Input Name Pattern
+    | Use Queue
     |--------------------------------------------------------------------------
     |
-    | Çoklu resim seçimi için input name pattern'i
-    | Örnek: 'images[]' veya 'gallery[]'
-    | Form gönderiminde array olarak algılanır
+    | Görsel dönüştürme işlemlerini queue ile yapmak için true yapın.
     |
     */
-    'multiple_name_pattern' => env('SEO_IMAGES_MULTIPLE_PATTERN', 'images[]'),
+    'use_queue' => env('SEO_IMAGES_USE_QUEUE', false),
 
     /*
     |--------------------------------------------------------------------------
-    | Default Multiple Selection
+    | Max Upload Size
     |--------------------------------------------------------------------------
     |
-    | Varsayılan olarak çoklu seçim aktif mi?
+    | Maksimum yükleme boyutu (kilobayt cinsinden).
     |
     */
-    'default_multiple' => env('SEO_IMAGES_DEFAULT_MULTIPLE', false),
+    'max_upload_size' => env('SEO_IMAGES_MAX_UPLOAD_SIZE', 5120), // 5MB
 
     /*
     |--------------------------------------------------------------------------
-    | Theme Colors
+    | Allowed Mime Types
     |--------------------------------------------------------------------------
     |
-    | Eklenti için tema renkleri. CSS değişkenleri olarak kullanılır.
-    | Bootstrap renklerini veya özel renkler kullanabilirsiniz.
-    | .env dosyasından da değiştirilebilir (opsiyonel).
+    | İzin verilen görsel MIME tipleri.
     |
     */
-    'theme' => [
-        'primary' => env('SEO_IMAGES_PRIMARY_COLOR', '#3A3987'),
-        'success' => env('SEO_IMAGES_SUCCESS_COLOR', '#28a745'),
-        'danger' => env('SEO_IMAGES_DANGER_COLOR', '#dc3545'),
-        'warning' => env('SEO_IMAGES_WARNING_COLOR', '#ffc107'),
-        'info' => env('SEO_IMAGES_INFO_COLOR', '#17a2b8'),
-        'light' => env('SEO_IMAGES_LIGHT_COLOR', '#f8f9fa'),
-        'dark' => env('SEO_IMAGES_DARK_COLOR', '#343a40'),
-        'border_radius' => env('SEO_IMAGES_BORDER_RADIUS', '8px'),
-        'box_shadow' => env('SEO_IMAGES_BOX_SHADOW', '0 2px 4px rgba(0,0,0,0.1)'),
+    'allowed_mime_types' => [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'image/avif',
+        'image/heic',
+        'image/heif',
     ],
 ];

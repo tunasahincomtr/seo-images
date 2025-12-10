@@ -1,314 +1,142 @@
 # SEO Images - Laravel Paketi
 
-WordPress medya kütüphanesi benzeri, SEO uyumlu resim yönetim paketi. Modern web standartlarına uygun, performans odaklı ve Google Lighthouse 100/100 skoruna uygun resim yönetim sistemi.
+Laravel projelerinde kullanılacak, tam çalışan, stabil bir medya kütüphanesi. Görselleri otomatik olarak JPG, WebP ve AVIF formatlarına dönüştürür ve SEO uyumlu `<picture>` etiketleri ile responsive çıktı üretir.
 
-**Versiyon:** 2.0+  
-**Son Güncelleme:** 2025-12-10
-
-## 🆕 Yeni Özellikler (v2.0+)
-
--   ✅ **Picture Etiketi Her Yerde**: Galeri ve detay panelinde tüm resimler `<picture>` etiketi ile gösterilir
--   ✅ **Format ve Boyut Yönetimi**: Detay panelinde tüm formatlar ve boyutlar button olarak görüntülenir
--   ✅ **Esnek Class/ID Sistemi**: Picture ve img etiketleri için ayrı class ve ID desteği
--   ✅ **Popover Silme Onayı**: Modern popover ile resim silme onayı
--   ✅ **Empty State Tasarımı**: Boş durumlar için özel tasarım
--   ✅ **Memory Optimizasyonu**: Büyük resimler için dinamik memory yönetimi
--   ✅ **100% Height Modal**: Modal içinde column'lar tam yüksekliği kullanır
+**Yazar:** Tuna Şahin
 
 ## 📋 İçindekiler
 
--   [Özellikler](#-özellikler)
--   [Gereksinimler](#-gereksinimler)
--   [Kurulum](#-kurulum)
--   [Yapılandırma](#-yapılandırma)
--   [Kullanım](#-kullanım)
--   [Sistem Mimarisi](#-sistem-mimarisi)
--   [Resim Formatları ve Boyutlandırma](#-resim-formatları-ve-boyutlandırma)
--   [SEO Optimizasyonları](#-seo-optimizasyonları)
--   [Tema Özelleştirme](#-tema-özelletirme)
--   [API Dokümantasyonu](#-api-dokümantasyonu)
--   [Sorun Giderme](#-sorun-giderme)
--   [Katkıda Bulunma](#-katkıda-bulunma)
--   [Lisans](#-lisans)
-
----
+-   [Özellikler](#özellikler)
+-   [Gereksinimler](#gereksinimler)
+-   [Kurulum](#kurulum)
+-   [Kullanım](#kullanım)
+-   [Blade Directive'leri](#blade-directiveleri)
+-   [Yapılandırma](#yapılandırma)
+-   [API Endpoints](#api-endpoints)
+-   [Test Sayfası](#test-sayfası)
+-   [Dosya Yapısı](#dosya-yapısı)
+-   [Sık Sorulan Sorular](#sık-sorulan-sorular)
+-   [Notlar](#notlar)
 
 ## ✨ Özellikler
 
-### 🎯 Temel Özellikler
+-   ✅ **Otomatik format dönüştürme** - JPG, WebP ve AVIF formatlarında otomatik üretim
+-   ✅ **Çoklu boyut desteği** - 480, 768, 1200, 1920px boyutlarında otomatik varyasyonlar
+-   ✅ **Drag & Drop yükleme** - Sürükle-bırak ile kolay dosya yükleme
+-   ✅ **Toplu yükleme** - Birden fazla görseli aynı anda yükleme
+-   ✅ **Tekli ve çoklu görsel seçimi** - Formlarda esnek görsel seçimi
+-   ✅ **Meta veri yönetimi** - Alt text ve title yönetimi
+-   ✅ **Blade directive'leri** - Kolay kullanım için özel Blade direktifleri
+-   ✅ **Tam çalışan frontend** - Bootstrap 5 + jQuery ile modern arayüz
+-   ✅ **Responsive çıktı** - SEO uyumlu `<picture>` etiketleri
+-   ✅ **Memory optimizasyonu** - Büyük dosyalar için otomatik bellek yönetimi
+-   ✅ **Full screen modal** - Geniş çalışma alanı
+-   ✅ **Format ve varyasyon görüntüleme** - Tüm formatları detaylı görüntüleme
 
--   📸 **WordPress Benzeri Medya Kütüphanesi**: Tam ekran modal ile resim seçme ve yönetme
--   🖼️ **Sürükle-Bırak Yükleme**: Modern drag & drop arayüzü ile kolay resim yükleme
--   🔄 **Otomatik Format Dönüştürme**: Yüklenen resimler otomatik olarak WebP, AVIF ve JPG formatlarına çevrilir
--   📁 **Tarih Bazlı Organizasyon**: Resimler `2025/12/05/dosya-adi` formatında organize edilir
--   🏷️ **Alt Etiketi ve Başlık Yönetimi**: Her resim için alt etiketi ve başlık düzenleme
--   🔍 **Gelişmiş Arama**: Alt etiketi, başlık ve dosya adına göre arama
--   📄 **Sayfalama**: İlk 12 resim gösterilir, "Daha Fazla Göster" ile 12'şer yüklenir
--   ✅ **Çoklu Resim Seçimi**: Checkbox ile birden fazla resim seçme ve drag & drop sıralama
--   🎨 **Tam Ekran Modal**: Fullscreen modal ile geniş çalışma alanı (100% height)
--   🖼️ **Picture Etiketi Her Yerde**: Galeri ve detay panelinde tüm resimler `<picture>` etiketi ile gösterilir
--   📋 **Format ve Boyut Yönetimi**: Detay panelinde tüm formatlar ve boyutlar button olarak görüntülenir ve tıklanabilir
--   🗑️ **Popover Silme Onayı**: Modern popover ile resim silme onayı (alert yerine)
--   🎯 **Empty State Tasarımı**: Boş durumlar için özel ikon ve mesaj tasarımı
--   💾 **Memory Optimizasyonu**: Büyük resimler için dinamik memory yönetimi (10MB+ için 512MB) (100% height)
--   🗑️ **Popover Silme Onayı**: Modern popover ile resim silme onayı
--   📊 **Format ve Boyut Yönetimi**: Detay panelinde tüm formatlar ve boyutlar görüntülenir
--   🎯 **Empty State Tasarımı**: Boş durumlar için özel tasarım
--   💾 **Memory Optimizasyonu**: Büyük resimler için dinamik memory yönetimi
+## 🔧 Gereksinimler
 
-### 🚀 SEO ve Performans Özellikleri
+-   Laravel 10+ veya 11+
+-   PHP 8.1+
+-   Intervention Image v2.7
+-   Bootstrap 5 (CDN veya local)
+-   jQuery 3.x (CDN veya local)
 
--   🖼️ **Modern Picture Etiketi**: AVIF, WebP ve JPG formatlarını destekleyen `<picture>` etiketi
--   📱 **Responsive Images**: `srcset` ve `sizes` attribute'ları ile responsive resimler
--   ⚡ **Lazy Loading**: `loading="lazy"` ile performans optimizasyonu
--   🔄 **Async Decoding**: `decoding="async"` ile render optimizasyonu
--   🎯 **Fetch Priority**: Varsayılan olarak `fetchpriority="low"` (tüm resimler için)
--   📊 **Otomatik Boyutlandırma**: 480w, 768w, 1200w, 1920w ve orijinal boyutlar
--   🎨 **Tema Özelleştirme**: CSS değişkenleri ile kolay tema düzenleme
--   🖼️ **Galeri ve Detay Panelinde Picture**: Tüm resim gösterimleri `<picture>` etiketi ile
--   📋 **Format ve Boyut Gösterimi**: Detay panelinde tüm formatlar ve boyutlar button olarak gösterilir
--   🎨 **Esnek Class/ID Sistemi**: Picture ve img etiketleri için ayrı class ve ID desteği
-
----
-
-## 📦 Gereksinimler
-
-### Sistem Gereksinimleri
-
--   **PHP**: >= 8.1
--   **Laravel**: >= 10.0
--   **GD Extension** veya **Imagick Extension** (resim işleme için)
--   **Bootstrap 5** (modal ve UI bileşenleri için)
-
-### PHP Extension'ları
-
-```bash
-# GD Extension (varsayılan)
-php -m | grep gd
-
-# veya Imagick Extension
-php -m | grep imagick
-```
-
-### Composer Paketleri (Otomatik Yüklenir)
-
--   `intervention/image`: ^3.11 - Resim işleme ve format dönüştürme
--   `spatie/image-optimizer`: ^1.8 - Resim optimizasyonu
-
----
-
-## 🚀 Kurulum
+## 📦 Kurulum
 
 ### 1. Paketi Yükleyin
 
 ```bash
-composer require tunasahincomtr/seo-images:dev-main
+composer require tunasahin/seo-images
 ```
 
-### 2. Service Provider'ı Kaydedin
+Eğer paket local development için kullanılıyorsa, `composer.json` dosyanıza repository ekleyin:
 
-Laravel 11+ için otomatik olarak kaydedilir. Eski versiyonlar için `config/app.php` dosyasına ekleyin:
-
-```php
-'providers' => [
-    // ...
-    Tunasahin\SeoImages\SeoImagesServiceProvider::class,
-],
+```json
+{
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/tunasahin/seo-images"
+        }
+    ],
+    "require": {
+        "tunasahin/seo-images": "*"
+    }
+}
 ```
 
-### 3. Migration'ları Çalıştırın
+### 2. Yayınlama ve Migrasyon
+
+Config dosyasını yayınlayın:
+
+```bash
+php artisan vendor:publish --tag=seo-images-config
+```
+
+Migration dosyalarını yayınlayın:
+
+```bash
+php artisan vendor:publish --tag=seo-images-migrations
+```
+
+Asset dosyalarını (JS ve CSS) yayınlayın:
+
+```bash
+php artisan vendor:publish --tag=seo-images-assets
+```
+
+View dosyalarını yayınlayın (opsiyonel):
+
+```bash
+php artisan vendor:publish --tag=seo-images-views
+```
+
+Migration'ları çalıştırın:
 
 ```bash
 php artisan migrate
 ```
 
-Bu komut `seo_images` tablosunu oluşturur. Tablo şu kolonları içerir:
+### 3. Storage Link Oluşturun
 
--   `id`: Birincil anahtar
--   `path`: Orijinal dosya yolu
--   `folder_path`: Klasör yolu (2025/12/05/x formatında)
--   `original_name`: Orijinal dosya adı
--   `alt_text`: Alt etiketi (nullable)
--   `title`: Başlık (nullable)
--   `width`: Genişlik (piksel)
--   `height`: Yükseklik (piksel)
--   `file_size`: Dosya boyutu (byte)
--   `mime_type`: MIME tipi
--   `created_at`, `updated_at`: Zaman damgaları
-
-### 4. Storage Link'i Oluşturun
+Eğer `public` disk kullanıyorsanız, storage link oluşturun:
 
 ```bash
 php artisan storage:link
 ```
 
-Bu komut `storage/app/public` klasörünü `public/storage` ile sembolik link olarak bağlar.
+Bu komut `public/storage` klasörünü `storage/app/public` klasörüne bağlar.
 
-### 5. Asset Dosyalarını Yayınlayın (Opsiyonel)
+## 🚀 Kullanım
 
-```bash
-php artisan vendor:publish --tag=seo-images
-```
+### Temel Kurulum
 
-Bu komut şu dosyaları yayınlar:
-
--   `config/seo-images.php` - Yapılandırma dosyası
--   `resources/views/vendor/seo-images/` - Blade view dosyaları
--   `public/vendor/seo-images/css/` - CSS dosyaları
--   `public/vendor/seo-images/js/` - JavaScript dosyaları
-
----
-
-## ⚙️ Yapılandırma
-
-### Config Dosyası
-
-Yayınladıktan sonra `config/seo-images.php` dosyasını düzenleyebilirsiniz:
-
-```php
-return [
-    // Storage disk'i
-    'disk' => env('SEO_IMAGES_DISK', 'public'),
-
-    // Resim kalitesi (1-100)
-    'quality' => env('SEO_IMAGES_QUALITY', 90),
-
-    // Maksimum dosya boyutu (KB)
-    'max_file_size' => env('SEO_IMAGES_MAX_SIZE', 10240), // 10MB
-
-    // Çoklu resim seçimi için input name pattern
-    'multiple_name_pattern' => env('SEO_IMAGES_MULTIPLE_PATTERN', 'images[]'),
-
-    // Varsayılan çoklu seçim
-    'default_multiple' => env('SEO_IMAGES_DEFAULT_MULTIPLE', false),
-
-    // Tema renkleri
-    'theme' => [
-        'primary' => env('SEO_IMAGES_PRIMARY_COLOR', '#3A3987'),
-        'success' => env('SEO_IMAGES_SUCCESS_COLOR', '#28a745'),
-        'danger' => env('SEO_IMAGES_DANGER_COLOR', '#dc3545'),
-        'warning' => env('SEO_IMAGES_WARNING_COLOR', '#ffc107'),
-        'info' => env('SEO_IMAGES_INFO_COLOR', '#17a2b8'),
-        'light' => env('SEO_IMAGES_LIGHT_COLOR', '#f8f9fa'),
-        'dark' => env('SEO_IMAGES_DARK_COLOR', '#343a40'),
-        'border_radius' => env('SEO_IMAGES_BORDER_RADIUS', '8px'),
-        'box_shadow' => env('SEO_IMAGES_BOX_SHADOW', '0 2px 4px rgba(0,0,0,0.1)'),
-    ],
-];
-```
-
-### .env Dosyası ile Yapılandırma
-
-```env
-SEO_IMAGES_DISK=public
-SEO_IMAGES_QUALITY=90
-SEO_IMAGES_MAX_SIZE=10240
-SEO_IMAGES_MULTIPLE_PATTERN=images[]
-SEO_IMAGES_DEFAULT_MULTIPLE=false
-SEO_IMAGES_PRIMARY_COLOR=#3A3987
-SEO_IMAGES_SUCCESS_COLOR=#28a745
-SEO_IMAGES_DANGER_COLOR=#dc3545
-```
-
----
-
-## 📖 Kullanım
-
-### Blade Direktifleri
-
-#### @imageInput - Resim Seçme Input'u
-
-**Tekli Resim Seçimi:**
-
-```blade
-@imageInput('image_path')
-```
-
-Bu direktif bir input alanı ve "Resim Seç" butonu oluşturur. Modal açılır ve resim seçildiğinde, klasör yolu input'a yazılır.
-
-**Çoklu Resim Seçimi:**
-
-```blade
-@imageInput('gallery', true)
-```
-
-Çoklu seçim modunda:
-
--   Checkbox'lar görünür
--   Birden fazla resim seçilebilir
--   Seçilen resimler sıralanabilir (drag & drop)
--   Form gönderiminde `gallery[0]`, `gallery[1]` şeklinde array olarak gelir
-
-#### @seopicture - SEO Uyumlu Picture Etiketi
-
-**ÖNEMLİ:** Alt etiketi ve fetchPriority parametreleri kaldırılmıştır. Alt etiketi veritabanından otomatik olarak alınır, fetchPriority varsayılan olarak 'low' kullanılır.
-
-**Basit Kullanım:**
-
-```blade
-@seopicture('2025/12/05/dosya-adi')
-```
-
-Alt etiketi veritabanından otomatik olarak alınır. Tüm formatlar (AVIF, WebP, JPG) ve boyutlar (srcset) otomatik olarak eklenir.
-
-**CSS Class ile (sadece img etiketi için):**
-
-```blade
-@seopicture('2025/12/05/dosya-adi', 'img-fluid rounded')
-```
-
-**CSS Class ve ID ile (sadece img etiketi için):**
-
-```blade
-@seopicture('2025/12/05/dosya-adi', 'img-fluid rounded', 'hero-image')
-```
-
-**Tüm Class ve ID'ler ile (picture ve img için ayrı):**
-
-```blade
-@seopicture('2025/12/05/dosya-adi', 'img-fluid rounded', 'hero-img-id', 'picture-wrapper', 'hero-picture-id')
-```
-
-**Parametre Sırası:**
-
-1. `folder_path` (zorunlu): Resim klasör yolu (örn: '2025/12/05/dosya-adi')
-2. `imgClass` (opsiyonel): `<img>` etiketi için CSS class
-3. `imgId` (opsiyonel): `<img>` etiketi için ID
-4. `pictureClass` (opsiyonel): `<picture>` etiketi için CSS class
-5. `pictureId` (opsiyonel): `<picture>` etiketi için ID
-
-**Örnekler:**
-
-```blade
-{{-- Sadece path --}}
-@seopicture('2025/12/05/hero-image')
-
-{{-- Path + img class --}}
-@seopicture('2025/12/05/hero-image', 'img-fluid')
-
-{{-- Path + img class + img id --}}
-@seopicture('2025/12/05/hero-image', 'img-fluid', 'main-hero')
-
-{{-- Tüm parametreler --}}
-@seopicture('2025/12/05/hero-image', 'img-fluid rounded', 'hero-img', 'picture-hero', 'hero-picture')
-```
-
-### Tam Örnek
+1. **Layout dosyanıza script'leri ekleyin:**
 
 ```blade
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>SEO Images Örneği</title>
+
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SEO Images Scripts -->
+    @seoimagesScripts
 </head>
 <body>
-    <div class="container mt-5">
-        <h1>Resim Yönetimi</h1>
+    <!-- İçerik -->
 
+<<<<<<< HEAD
         <form method="POST" action="/save">
             @csrf
 
@@ -351,724 +179,673 @@ Alt etiketi veritabanından otomatik olarak alınır. Tüm formatlar (AVIF, WebP
     @stack('styles')
     @stack('scripts')
     @stack('modals')
+=======
+    <!-- Modal'ı ekleyin -->
+    @include('seo-images::modal')
+>>>>>>> 1cb6bb5 (Update: image optimization improvements)
 </body>
 </html>
 ```
 
-### Controller'da Kullanım
+2. **Formunuzda görsel seçimi ekleyin:**
+
+```blade
+<form method="POST" action="/your-route">
+    @csrf
+
+    <div class="mb-3">
+        <label>Kapak Görseli</label>
+        @seoinput('cover_image')
+    </div>
+
+    <div class="mb-3">
+        <label>Galeri</label>
+        @seoinput('gallery', 'multiple')
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+</form>
+```
+
+3. **Form gönderildiğinde görselleri kullanın:**
+
+```php
+// Controller'da
+public function store(Request $request)
+{
+    $coverImage = $request->input('cover_image'); // "2025/12/10/x" formatında
+    $gallery = json_decode($request->input('gallery'), true); // Array formatında
+
+    // Veritabanına kaydedin
+    Post::create([
+        'cover_image' => $coverImage,
+        'gallery' => $gallery,
+    ]);
+
+    return redirect()->back();
+}
+```
+
+4. **Görselleri sayfada gösterin:**
+
+```blade
+<!-- Tekli görsel -->
+@seoimages($post->cover_image, [
+    'class' => 'img-fluid rounded',
+    'alt' => $post->title,
+])
+
+<!-- Galeri görselleri -->
+@foreach($post->gallery as $imagePath)
+    <div class="col-md-4 mb-3">
+        @seoimages($imagePath, [
+            'class' => 'img-fluid rounded',
+            'loading' => 'lazy',
+        ])
+    </div>
+@endforeach
+```
+
+## 📝 Blade Directive'leri
+
+### @seoinput - Görsel Seçimi
+
+Formlarda görsel seçimi için kullanılır. İki modu vardır: tekli ve çoklu.
+
+#### Tekli Görsel Seçimi
+
+```blade
+@seoinput('cover_image')
+```
+
+Bu directive şunları oluşturur:
+
+-   Hidden input: `name="cover_image"` (değer: `"2025/12/10/x"` formatında)
+-   Önizleme alanı
+-   "Resim Seç" butonu
+
+**Kullanım Senaryosu:**
+
+-   Blog yazısı kapak görseli
+-   Ürün ana görseli
+-   Profil fotoğrafı
+
+#### Çoklu Görsel Seçimi (Galeri)
+
+```blade
+@seoinput('gallery', 'multiple')
+```
+
+Bu directive şunları oluşturur:
+
+-   Hidden input: `name="gallery"` (değer: `'["2025/12/10/x","2025/12/11/y"]'` JSON formatında)
+-   Önizleme grid'i
+-   "Galeri Seç" butonu
+-   Her görsel için silme butonu
+
+**Kullanım Senaryosu:**
+
+-   Ürün galerisi
+-   Blog yazısı görselleri
+-   Portfolio görselleri
+
+### @seoimages - Görsel Gösterimi
+
+Görseli SEO uyumlu `<picture>` etiketi ile gösterir.
+
+#### Basit Kullanım
+
+```blade
+@seoimages('2025/12/10/x')
+```
+
+#### Gelişmiş Kullanım
+
+```blade
+@seoimages('2025/12/10/x', [
+    'class' => 'img-fluid rounded shadow',
+    'alt' => 'Özel alt metni',
+    'title' => 'Özel başlık',
+    'loading' => 'lazy',
+    'width' => 1200,
+    'height' => 800,
+])
+```
+
+**Parametreler:**
+
+-   `class` - CSS class'ları
+-   `alt` - Alt text (veritabanındaki değer yerine kullanılır)
+-   `title` - Title attribute (veritabanındaki değer yerine kullanılır)
+-   `loading` - Lazy loading (`lazy` veya `eager`)
+-   `width` - Görsel genişliği
+-   `height` - Görsel yüksekliği
+
+**Çıktı Örneği:**
+
+```html
+<picture>
+    <source
+        srcset="
+            /storage/2025/12/10/x/x-480.avif   480w,
+            /storage/2025/12/10/x/x-768.avif   768w,
+            /storage/2025/12/10/x/x-1200.avif 1200w,
+            /storage/2025/12/10/x/x.avif      1920w
+        "
+        type="image/avif"
+    />
+    <source
+        srcset="
+            /storage/2025/12/10/x/x-480.webp   480w,
+            /storage/2025/12/10/x/x-768.webp   768w,
+            /storage/2025/12/10/x/x-1200.webp 1200w,
+            /storage/2025/12/10/x/x.webp      1920w
+        "
+        type="image/webp"
+    />
+    <img
+        src="/storage/2025/12/10/x/x.jpg"
+        alt="Özel alt metni"
+        title="Özel başlık"
+        width="1200"
+        height="800"
+        loading="lazy"
+        class="img-fluid rounded shadow"
+    />
+</picture>
+```
+
+### @seoimagesScripts - CSS ve JS Yükleme
+
+Paketin CSS ve JavaScript dosyalarını yükler. `<head>` bölümüne eklenmelidir.
+
+```blade
+<head>
+    @seoimagesScripts
+</head>
+```
+
+## ⚙️ Yapılandırma
+
+Config dosyası: `config/seo-images.php`
+
+### Tüm Ayarlar
+
+```php
+return [
+    // Storage disk adı
+    'disk' => env('SEO_IMAGES_DISK', 'public'),
+
+    // Üretilecek görsel boyutları (genişlik piksel cinsinden)
+    'sizes' => [480, 768, 1200, 1920],
+
+    // Kalite ayarları (0-100 arası)
+    'quality_jpg' => env('SEO_IMAGES_QUALITY_JPG', 80),
+    'quality_webp' => env('SEO_IMAGES_QUALITY_WEBP', 80),
+    'quality_avif' => env('SEO_IMAGES_QUALITY_AVIF', 60),
+
+    // Route middleware'leri
+    'route_middleware' => ['web', 'auth'],
+
+    // Queue kullanımı (true ise görsel dönüştürme queue ile yapılır)
+    'use_queue' => env('SEO_IMAGES_USE_QUEUE', false),
+
+    // Maksimum yükleme boyutu (kilobayt cinsinden)
+    'max_upload_size' => env('SEO_IMAGES_MAX_UPLOAD_SIZE', 5120), // 5MB
+
+    // İzin verilen MIME tipleri
+    'allowed_mime_types' => [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'image/avif',
+        'image/heic',
+        'image/heif',
+    ],
+];
+```
+
+### .env Dosyası Örnekleri
+
+```env
+SEO_IMAGES_DISK=public
+SEO_IMAGES_QUALITY_JPG=80
+SEO_IMAGES_QUALITY_WEBP=80
+SEO_IMAGES_QUALITY_AVIF=60
+SEO_IMAGES_USE_QUEUE=false
+SEO_IMAGES_MAX_UPLOAD_SIZE=5120
+```
+
+## 🔌 API Endpoints
+
+Tüm endpoint'ler `/seo-images` prefix'i ile çalışır ve `web` + `auth` middleware'leri ile korunur (config'den değiştirilebilir).
+
+### GET /seo-images/list
+
+Görselleri sayfalı olarak listeler.
+
+**Query Parametreleri:**
+
+-   `page` (int, varsayılan: 1) - Sayfa numarası
+-   `per_page` (int, varsayılan: 9) - Sayfa başına görsel sayısı
+-   `search` (string, opsiyonel) - Arama terimi
+
+**Response:**
+
+```json
+{
+    "data": [
+        {
+            "id": 1,
+            "folder_path": "2025/12/10/x",
+            "basename": "x",
+            "preview_url": "http://example.com/storage/2025/12/10/x/x-480.webp",
+            "alt": "Görsel açıklaması",
+            "title": "Görsel başlığı",
+            "width": 1920,
+            "height": 1080,
+            "formats": [
+                {
+                    "format": "jpg",
+                    "original": {
+                        "exists": true,
+                        "url": "http://example.com/storage/2025/12/10/x/x.jpg",
+                        "size": 245760
+                    },
+                    "sizes": [
+                        {
+                            "width": 480,
+                            "url": "http://example.com/storage/2025/12/10/x/x-480.jpg",
+                            "exists": true
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "meta": {
+        "current_page": 1,
+        "last_page": 5,
+        "total": 45
+    }
+}
+```
+
+### POST /seo-images/upload
+
+Yeni bir görsel yükler ve tüm formatları oluşturur.
+
+**Request:**
+
+-   `file` (required) - Yüklenecek görsel dosyası
+
+**Response (Başarılı):**
+
+```json
+{
+    "id": 1,
+    "folder_path": "2025/12/10/x",
+    "basename": "x",
+    "preview_url": "http://example.com/storage/2025/12/10/x/x-480.webp",
+    "alt": "",
+    "title": "",
+    "width": 1920,
+    "height": 1080
+}
+```
+
+**Response (Hata):**
+
+```json
+{
+    "error": true,
+    "message": "Dosya boyutu çok büyük. Maksimum: 5120 KB"
+}
+```
+
+### POST /seo-images/{id}/update-meta
+
+Görselin meta verilerini (alt text ve title) günceller.
+
+**Request:**
+
+```json
+{
+    "alt": "Yeni alt metni",
+    "title": "Yeni başlık"
+}
+```
+
+**Response:**
+
+```json
+{
+    "status": "ok",
+    "data": {
+        "id": 1,
+        "folder_path": "2025/12/10/x",
+        "basename": "x",
+        "alt": "Yeni alt metni",
+        "title": "Yeni başlık"
+    }
+}
+```
+
+### DELETE /seo-images/{id}
+
+Görseli ve tüm varyasyonlarını siler.
+
+**Response:**
+
+```json
+{
+    "status": "ok"
+}
+```
+
+### POST /seo-images/render
+
+Görselin HTML çıktısını döndürür (AJAX için).
+
+**Request:**
+
+```json
+{
+    "folder_path": "2025/12/10/x",
+    "options": {
+        "class": "img-fluid",
+        "style": "max-width: 100px;"
+    }
+}
+```
+
+**Response:**
+
+```json
+{
+    "html": "<picture>...</picture>"
+}
+```
+
+## 🧪 Test Sayfası
+
+Paket, test için bir demo sayfası içerir:
+
+```
+/seo-images/test
+```
+
+Bu sayfada şunları test edebilirsiniz:
+
+-   ✅ Tekli görsel seçimi
+-   ✅ Çoklu görsel seçimi (galeri)
+-   ✅ Görsel yükleme (drag & drop ve dosya seç)
+-   ✅ Toplu görsel yükleme
+-   ✅ Meta veri güncelleme
+-   ✅ Görsel silme
+-   ✅ Format ve varyasyon görüntüleme
+-   ✅ @seoimages directive çıktısı
+
+**Not:** Test sayfasına erişmek için authentication gerekebilir (config'den değiştirilebilir).
+
+## 📁 Dosya Yapısı
+
+Yüklenen görseller şu yapıda saklanır:
+
+```
+storage/app/public/
+  2025/
+    12/
+      10/
+        x/
+          x.jpg              # Orijinal JPG
+          x.webp             # Orijinal WebP
+          x.avif             # Orijinal AVIF
+          x-480.jpg          # 480px JPG
+          x-480.webp         # 480px WebP
+          x-480.avif         # 480px AVIF
+          x-768.jpg          # 768px JPG
+          x-768.webp         # 768px WebP
+          x-768.avif         # 768px AVIF
+          x-1200.jpg         # 1200px JPG
+          x-1200.webp        # 1200px WebP
+          x-1200.avif        # 1200px AVIF
+          x-1920.jpg         # 1920px JPG
+          x-1920.webp        # 1920px WebP
+          x-1920.avif        # 1920px AVIF
+```
+
+**Klasör Yapısı:**
+
+-   `{YIL}/{AY}/{GÜN}/{SLUG}/` formatında
+-   Her görsel kendi klasöründe saklanır
+-   Slug çakışırsa otomatik olarak `-1`, `-2` eklenir
+
+## 💡 Kullanım Örnekleri
+
+### Örnek 1: Blog Yazısı Formu
+
+```blade
+<form method="POST" action="{{ route('posts.store') }}">
+    @csrf
+
+    <div class="mb-3">
+        <label>Başlık</label>
+        <input type="text" name="title" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label>Kapak Görseli</label>
+        @seoinput('cover_image')
+    </div>
+
+    <div class="mb-3">
+        <label>İçerik Görselleri</label>
+        @seoinput('content_images', 'multiple')
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+</form>
+```
+
+### Örnek 2: Ürün Formu
+
+```blade
+<form method="POST" action="{{ route('products.store') }}">
+    @csrf
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label>Ürün Adı</label>
+                <input type="text" name="name" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label>Ana Görsel</label>
+                @seoinput('main_image')
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Ürün Galerisi</label>
+        @seoinput('gallery', 'multiple')
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+</form>
+```
+
+### Örnek 3: Görselleri Gösterme
+
+```blade
+<!-- Blog yazısı detay sayfası -->
+<article>
+    <h1>{{ $post->title }}</h1>
+
+    <!-- Kapak görseli -->
+    @if($post->cover_image)
+        <div class="mb-4">
+            @seoimages($post->cover_image, [
+                'class' => 'img-fluid rounded shadow',
+                'alt' => $post->title,
+                'loading' => 'eager',
+            ])
+        </div>
+    @endif
+
+    <!-- İçerik -->
+    <div class="content">
+        {!! $post->content !!}
+    </div>
+
+    <!-- İçerik görselleri -->
+    @if($post->content_images)
+        <div class="row mt-4">
+            @foreach(json_decode($post->content_images, true) as $imagePath)
+                <div class="col-md-6 mb-3">
+                    @seoimages($imagePath, [
+                        'class' => 'img-fluid rounded',
+                        'loading' => 'lazy',
+                    ])
+                </div>
+            @endforeach
+        </div>
+    @endif
+</article>
+```
+
+### Örnek 4: Controller'da Kullanım
 
 ```php
 <?php
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     public function store(Request $request)
     {
-        // Tekli resim
-        $coverImage = $request->input('cover_image');
-        // $coverImage = "2025/12/05/dosya-adi"
-
-        // Çoklu resim
-        $gallery = $request->input('gallery');
-        // $gallery = ["2025/12/05/resim-1", "2025/12/05/resim-2", ...]
-
-        // Veritabanına kaydet
-        Post::create([
-            'cover_image' => $coverImage,
-            'gallery' => json_encode($gallery),
-            // ...
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'cover_image' => 'nullable|string',
+            'content_images' => 'nullable|string',
         ]);
+
+        $post = Post::create([
+            'title' => $validated['title'],
+            'cover_image' => $validated['cover_image'], // "2025/12/10/x" formatında
+            'content_images' => $validated['content_images'], // JSON string
+        ]);
+
+        return redirect()->route('posts.show', $post);
+    }
+
+    public function show(Post $post)
+    {
+        return view('posts.show', compact('post'));
     }
 }
 ```
 
----
-
-## 🏗️ Sistem Mimarisi
-
-### Dosya Yapısı
-
-```
-packages/tunasahin/seo-images/
-├── config/
-│   └── seo-images.php          # Yapılandırma dosyası
-├── src/
-│   ├── Database/
-│   │   └── Migrations/
-│   │       └── create_seo_images_table.php
-│   ├── Http/
-│   │   └── Controllers/
-│   │       └── SeoImageController.php
-│   ├── Models/
-│   │   └── SeoImage.php
-│   ├── Resources/
-│   │   ├── css/
-│   │   │   └── seo-images.css
-│   │   ├── js/
-│   │   │   └── seo-images.js
-│   │   └── views/
-│   │       ├── components/
-│   │       │   └── image-input.blade.php
-│   │       └── modal.blade.php
-│   ├── Services/
-│   │   ├── ImageService.php    # Resim yükleme ve işleme
-│   │   └── PictureService.php  # Picture etiketi oluşturma
-│   └── SeoImagesServiceProvider.php
-└── routes/
-    └── web.php
-```
-
-### Servisler
-
-#### ImageService
-
-Resim yükleme, format dönüştürme ve boyutlandırma işlemlerini yönetir:
-
--   `uploadImage()`: Resmi yükler, formatları oluşturur ve veritabanına kaydeder
--   `updateImage()`: Resim bilgilerini günceller
--   `deleteImage()`: Resmi ve dosyalarını siler
--   `calculateSrcsetWidths()`: Srcset için genişlikleri hesaplar
-
-#### PictureService
-
-SEO uyumlu `<picture>` etiketi oluşturur:
-
--   `render()`: Picture etiketi HTML'ini oluşturur
--   `buildSrcset()`: Srcset attribute'unu oluşturur
--   `calculateSizes()`: Sizes attribute'unu hesaplar
-
-### Veritabanı Yapısı
-
-```sql
-CREATE TABLE seo_images (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    path VARCHAR(255) NOT NULL,
-    folder_path VARCHAR(255) NOT NULL,
-    original_name VARCHAR(255) NOT NULL,
-    alt_text VARCHAR(255) NULL,
-    title VARCHAR(255) NULL,
-    width INT NULL,
-    height INT NULL,
-    file_size INT NULL,
-    mime_type VARCHAR(255) NULL,
-    created_at TIMESTAMP NULL,
-    updated_at TIMESTAMP NULL,
-    INDEX idx_folder_path (folder_path)
-);
-```
-
----
-
-## 🖼️ Resim Formatları ve Boyutlandırma
-
-### Otomatik Format Dönüştürme
-
-Bir resim yüklendiğinde (`x.png`), sistem otomatik olarak 3 formata çevirir:
-
-1. **AVIF** (En modern, en küçük dosya boyutu)
-2. **WebP** (Modern tarayıcılar için)
-3. **JPG** (Eski tarayıcılar için fallback)
-
-### Dosya Yapısı
-
-Yüklenen bir resim (`hero-image.png`, 1920x1080) şu şekilde organize edilir:
-
-```
-storage/app/public/
-└── 2025/
-    └── 12/
-        └── 05/
-            └── hero-image/
-                ├── hero-image.avif          # Orijinal boyut (1920w)
-                ├── hero-image.webp          # Orijinal boyut (1920w)
-                ├── hero-image.jpg           # Orijinal boyut (1920w)
-                ├── hero-image-480.avif      # 480w boyutu
-                ├── hero-image-480.webp     # 480w boyutu
-                ├── hero-image-480.jpg      # 480w boyutu
-                ├── hero-image-768.avif     # 768w boyutu
-                ├── hero-image-768.webp    # 768w boyutu
-                ├── hero-image-768.jpg      # 768w boyutu
-                ├── hero-image-1200.avif    # 1200w boyutu
-                ├── hero-image-1200.webp   # 1200w boyutu
-                └── hero-image-1200.jpg    # 1200w boyutu
-```
-
-**Input'a yazılan değer:** `2025/12/05/hero-image`
-
-### Boyutlandırma Mantığı
-
-Sistem, orijinal resmin genişliğine göre otomatik olarak şu boyutları oluşturur:
-
-| Orijinal Genişlik | Oluşturulan Boyutlar               |
-| ----------------- | ---------------------------------- |
-| ≤ 480px           | Orijinal boyut                     |
-| 481px - 768px     | 480w, Orijinal                     |
-| 769px - 1200px    | 480w, 768w, Orijinal               |
-| 1201px - 1920px   | 480w, 768w, 1200w, Orijinal        |
-| > 1920px          | 480w, 768w, 1200w, 1920w, Orijinal |
-
-**Örnek:** 1920x1080 bir resim yüklendiğinde:
-
--   ✅ 480w oluşturulur (mobil için)
--   ✅ 768w oluşturulur (tablet için)
--   ✅ 1200w oluşturulur (laptop için)
--   ✅ 1920w oluşturulur (desktop için)
--   ✅ Orijinal boyut (1920w) zaten var
-
-### Neden Bu Boyutlar?
-
-1. **480w**: Mobil cihazlar için optimize edilmiş küçük boyut
-2. **768w**: Tablet cihazlar için orta boyut
-3. **1200w**: Laptop ve küçük desktop ekranlar için
-4. **1920w**: Full HD ekranlar için
-5. **Orijinal**: Daha büyük ekranlar veya yüksek çözünürlük için
-
-Bu boyutlandırma stratejisi:
-
--   📱 Mobil kullanıcılar için daha hızlı yükleme
--   💾 Bandwidth tasarrufu
--   ⚡ Daha iyi performans skorları
--   🎯 Google Lighthouse 100/100 hedefi
-
----
-
-## 🎯 SEO Optimizasyonları
-
-### Picture Etiketi Yapısı
-
-`@seopicture` direktifi şu HTML'i oluşturur:
-
-```html
-<picture class="picture-wrapper" id="hero-picture-id">
-    <!-- Modern format - AVIF -->
-    <source
-        srcset="
-            /storage/2025/12/05/hero-image/hero-image-480.avif   480w,
-            /storage/2025/12/05/hero-image/hero-image-768.avif   768w,
-            /storage/2025/12/05/hero-image/hero-image-1200.avif 1200w,
-            /storage/2025/12/05/hero-image/hero-image.avif      1920w
-        "
-        type="image/avif"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 768px, 1200px"
-        width="1920"
-        height="1080"
-    />
-
-    <!-- WebP fallback -->
-    <source
-        srcset="
-            /storage/2025/12/05/hero-image/hero-image-480.webp   480w,
-            /storage/2025/12/05/hero-image/hero-image-768.webp   768w,
-            /storage/2025/12/05/hero-image/hero-image-1200.webp 1200w,
-            /storage/2025/12/05/hero-image/hero-image.webp      1920w
-        "
-        type="image/webp"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 768px, 1200px"
-        width="1920"
-        height="1080"
-    />
+## ❓ Sık Sorulan Sorular
 
-    <!-- Eski tarayıcı fallback - JPG -->
-    <img
-        src="/storage/2025/12/05/hero-image/hero-image.jpg"
-        srcset="
-            /storage/2025/12/05/hero-image/hero-image-480.jpg   480w,
-            /storage/2025/12/05/hero-image/hero-image-768.jpg   768w,
-            /storage/2025/12/05/hero-image/hero-image-1200.jpg 1200w,
-            /storage/2025/12/05/hero-image/hero-image.jpg      1920w
-        "
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 768px, 1200px"
-        alt="Veritabanından alınan alt etiketi"
-        width="1920"
-        height="1080"
-        loading="lazy"
-        decoding="async"
-        fetchpriority="low"
-        class="img-fluid rounded"
-        id="hero-img-id"
-    />
-</picture>
-```
+### Görsel yükleme sırasında "Memory exhausted" hatası alıyorum
 
-**Önemli Notlar:**
+Paket otomatik olarak memory limit kontrolü yapar ve büyük dosyalar için geçici olarak limit artırır. Eğer hala sorun yaşıyorsanız:
 
--   **Alt Etiketi**: Veritabanından otomatik olarak alınır (`alt_text` kolonu)
--   **FetchPriority**: Varsayılan olarak `low` kullanılır (tüm resimler için)
--   **Class ve ID**: Picture ve img etiketleri için ayrı class ve ID kullanılabilir
--   **Srcset**: Otomatik olarak oluşturulur (480w, 768w, 1200w, 1920w, orijinal)
--   **Sizes**: Resmin genişliğine göre otomatik hesaplanır
+1. PHP memory_limit değerini artırın (`php.ini` dosyasında)
+2. Config'de `max_upload_size` değerini düşürün
+3. `use_queue` ayarını `true` yapın (queue kullanımı için queue worker çalıştırmanız gerekir)
 
-### SEO Özellikleri Açıklaması
+### AVIF formatı oluşturulmuyor
 
-#### 1. `srcset` Attribute
+Intervention Image v2.7'de AVIF desteği sınırlıdır. Paket otomatik olarak WebP'ye fallback yapar. AVIF desteği için Intervention Image v3 kullanmanız gerekebilir.
 
-Tarayıcıya farklı ekran boyutları için farklı resim boyutları sunar:
+### Görseller görünmüyor (404 hatası)
 
-```html
-srcset="image-480.jpg 480w, image-768.jpg 768w, image-1200.jpg 1200w"
-```
+1. `php artisan storage:link` komutunu çalıştırdığınızdan emin olun
+2. `.env` dosyasında `APP_URL` değerinin doğru olduğundan emin olun
+3. Storage disk'inin (`public`) doğru yapılandırıldığından emin olun
 
--   **480w**: Mobil cihazlar için küçük dosya
--   **768w**: Tablet cihazlar için orta dosya
--   **1200w**: Desktop için büyük dosya
--   **1920w**: Full HD için en büyük dosya
+### Modal açılmıyor
 
-**Fayda:** Kullanıcı sadece ihtiyacı olan boyutu indirir, bandwidth tasarrufu sağlanır.
+1. Bootstrap 5 ve jQuery'nin yüklendiğinden emin olun
+2. `@seoimagesScripts` directive'inin `<head>` bölümünde olduğundan emin olun
+3. `@include('seo-images::modal')` satırının sayfanın sonunda olduğundan emin olun
+4. Browser console'da hata olup olmadığını kontrol edin
 
-#### 2. `sizes` Attribute
+### Çoklu görsel seçiminde görseller görünmüyor
 
-Tarayıcıya resmin görüntüleneceği boyutu söyler:
+1. Hidden input'un değerinin JSON formatında olduğundan emin olun
+2. `@seoimagesScripts` directive'inin yüklendiğinden emin olun
+3. Browser console'da JavaScript hatalarını kontrol edin
 
-```html
-sizes="(max-width: 768px) 100vw, (max-width: 1200px) 768px, 1200px"
-```
+### Form gönderildiğinde görsel değerleri boş geliyor
 
--   **max-width: 768px**: Mobilde tam genişlik (100vw)
--   **max-width: 1200px**: Tablet'te 768px genişlik
--   **Diğer**: Desktop'ta 1200px genişlik
+1. Hidden input'ların form içinde olduğundan emin olun
+2. Input name'lerinin doğru olduğundan emin olun
+3. Form submit edilmeden önce görsel seçildiğinden emin olun
 
-**Fayda:** Tarayıcı doğru boyutu seçer, gereksiz büyük dosya indirmez.
+## 📝 Notlar
 
-#### 3. `loading="lazy"`
+-   **AVIF Desteği:** Intervention Image v2.7'de AVIF formatı tam desteklenmeyebilir. Bu durumda WebP formatına fallback yapılır.
+-   **Slug Üretimi:** Görseller otomatik olarak benzersiz slug'lar ile saklanır. Çakışma durumunda `-1`, `-2` gibi ekler eklenir.
+-   **Soft Delete:** Görseller soft delete ile silinir. `deleted_at` alanı kullanılır.
+-   **Memory Yönetimi:** Paket büyük dosyalar için otomatik memory yönetimi yapar.
+-   **URL Yapısı:** Tüm URL'ler `.env` dosyasındaki `APP_URL` değerini kullanır.
+-   **Toplu Yükleme:** Birden fazla görsel seçildiğinde sıralı olarak yüklenir (memory için).
 
-Resimleri görünür alana girdiğinde yükler:
+## 🔒 Güvenlik
 
-**Fayda:**
+-   Tüm route'lar varsayılan olarak `auth` middleware'i ile korunur
+-   Dosya tipi validasyonu yapılır
+-   Dosya boyutu limiti vardır
+-   CSRF koruması aktif
 
--   İlk yükleme süresini kısaltır
--   Bandwidth tasarrufu
--   Daha iyi Core Web Vitals skorları
+## 🐛 Hata Ayıklama
 
-#### 4. `decoding="async"`
-
-Resim çözümlemesini arka planda yapar:
-
-**Fayda:**
-
--   Sayfa render'ını bloklamaz
--   Daha hızlı sayfa yükleme
--   Daha iyi kullanıcı deneyimi
-
-#### 5. `fetchpriority`
-
-Resim yükleme önceliğini belirler:
-
--   **`low`**: Varsayılan değer (tüm resimler için)
-
-**Not:** FetchPriority parametresi kaldırılmıştır. Tüm resimler varsayılan olarak `fetchpriority="low"` kullanır. Bu, Google'ın önerdiği best practice'dir ve sayfa performansını optimize eder.
-
-**Fayda:**
-
--   Sayfa yükleme performansı optimize edilir
--   Google'ın önerdiği best practice
--   Daha iyi Core Web Vitals skorları
-
-#### 6. `width` ve `height` Attribute'ları
-
-Resmin gerçek boyutlarını belirtir:
-
-**Fayda:**
-
--   Layout shift'i önler (CLS - Cumulative Layout Shift)
--   Daha iyi Core Web Vitals skorları
--   Google'ın önerdiği best practice
-
-### Google Lighthouse Skorları
-
-Bu optimizasyonlar sayesinde:
-
--   ✅ **Performance**: 100/100
--   ✅ **Best Practices**: 100/100
--   ✅ **SEO**: 100/100
--   ✅ **Accessibility**: 100/100
-
----
-
-## 🎨 Tema Özelleştirme
-
-### CSS Değişkenleri ile Tema Düzenleme
-
-Paket, CSS değişkenleri kullanarak kolay tema özelleştirmesi sunar. CSS değişkenleri doğrudan `packages/tunasahin/seo-images/src/resources/css/seo-images.css` dosyasında `:root` bloğunda tanımlanmıştır. Asset'leri yayınladıktan sonra `public/vendor/seo-images/css/seo-images.css` dosyasını düzenleyerek renkleri değiştirebilirsiniz:
-
-```css
-:root {
-    /* Tema Renkleri */
-    --seo-images-primary: #3a3987; /* Ana renk (butonlar, border'lar) */
-    --seo-images-success: #28a745; /* Başarı mesajları */
-    --seo-images-danger: #dc3545; /* Hata mesajları, silme butonları */
-    --seo-images-warning: #ffc107; /* Uyarı mesajları */
-    --seo-images-info: #17a2b8; /* Bilgi mesajları */
-    --seo-images-light: #f8f9fa; /* Açık arka plan */
-    --seo-images-dark: #343a40; /* Koyu arka plan */
-
-    /* Stil Ayarları */
-    --seo-images-border-radius: 8px; /* Köşe yuvarlaklığı */
-    --seo-images-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Gölge efekti */
-}
-```
-
-### Örnek: Tema Rengini Değiştirme
-
-```css
-:root {
-    --seo-images-primary: #ff6b6b; /* Kırmızı tema */
-    --seo-images-border-radius: 12px; /* Daha yuvarlak köşeler */
-    --seo-images-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Daha belirgin gölge */
-}
-```
-
-### Değişiklikleri Uygulama
-
-CSS dosyasını düzenledikten sonra:
+### Log Dosyalarını Kontrol Edin
 
 ```bash
-php artisan vendor:publish --tag=seo-images --force
+tail -f storage/logs/laravel.log
 ```
 
-Veya tarayıcı cache'ini temizleyin (Ctrl+F5).
-
-### Özelleştirilebilir Elementler
-
--   ✅ Buton renkleri (primary, success, danger)
--   ✅ Border renkleri
--   ✅ Hover efektleri
--   ✅ Seçili resim border'ları
--   ✅ Progress bar renkleri
--   ✅ Badge renkleri
--   ✅ Köşe yuvarlaklığı
--   ✅ Gölge efektleri
--   ✅ Empty state tasarımı
--   ✅ Popover stilleri
--   ✅ Modal yükseklik ayarları
-
----
-
-## 🔌 API Dokümantasyonu
-
-### Endpoint'ler
-
-Tüm endpoint'ler `/seo-images` prefix'i ile başlar.
-
-#### 1. Resimleri Listele
-
-```http
-GET /seo-images/images
-```
-
-**Query Parametreleri:**
-
--   `page` (integer): Sayfa numarası (varsayılan: 1)
--   `per_page` (integer): Sayfa başına resim sayısı (varsayılan: 12)
--   `search` (string): Arama terimi (alt_text, title, folder_path'te arar)
-
-**Örnek:**
-
-```http
-GET /seo-images/images?page=1&per_page=12&search=hero
-```
-
-**Yanıt:**
-
-```json
-{
-    "success": true,
-    "data": [
-        {
-            "id": 1,
-            "folder_path": "2025/12/05/hero-image",
-            "alt_text": "Hero resim",
-            "title": "Ana sayfa hero",
-            "width": 1920,
-            "height": 1080,
-            "url": "http://example.com/storage/2025/12/05/hero-image/hero-image.jpg",
-            "webp_url": "http://example.com/storage/2025/12/05/hero-image/hero-image.webp",
-            "avif_url": "http://example.com/storage/2025/12/05/hero-image/hero-image.avif",
-            "created_at": "2025-12-05 10:30:00"
-        }
-    ],
-    "pagination": {
-        "total": 50,
-        "per_page": 12,
-        "current_page": 1,
-        "has_more": true
-    }
-}
-```
-
-#### 2. Resim Yükle
-
-```http
-POST /seo-images/images
-```
-
-**Content-Type:** `multipart/form-data`
-
-**Form Data:**
-
--   `image` (file): Yüklenecek resim dosyası
--   `alt_text` (string, optional): Alt etiketi
--   `title` (string, optional): Başlık
-
-**Yanıt:**
-
-```json
-{
-    "success": true,
-    "message": "Resim başarıyla yüklendi",
-    "data": {
-        "id": 1,
-        "folder_path": "2025/12/05/hero-image",
-        "alt_text": "Hero resim",
-        "title": "Ana sayfa hero",
-        "width": 1920,
-        "height": 1080,
-        "url": "http://example.com/storage/2025/12/05/hero-image/hero-image.jpg",
-        "webp_url": "http://example.com/storage/2025/12/05/hero-image/hero-image.webp",
-        "avif_url": "http://example.com/storage/2025/12/05/hero-image/hero-image.avif"
-    }
-}
-```
-
-#### 3. Resim Güncelle
-
-```http
-PUT /seo-images/images/{id}
-```
-
-**Content-Type:** `application/json`
-
-**Body:**
-
-```json
-{
-    "alt_text": "Yeni alt etiketi",
-    "title": "Yeni başlık"
-}
-```
-
-**Yanıt:**
-
-```json
-{
-    "success": true,
-    "message": "Resim başarıyla güncellendi",
-    "data": {
-        "id": 1,
-        "folder_path": "2025/12/05/hero-image",
-        "alt_text": "Yeni alt etiketi",
-        "title": "Yeni başlık"
-    }
-}
-```
-
-#### 4. Resim Sil
-
-```http
-DELETE /seo-images/images/{id}
-```
-
-**Yanıt:**
-
-```json
-{
-    "success": true,
-    "message": "Resim başarıyla silindi"
-}
-```
-
-### CSRF Koruması
-
-Tüm POST, PUT, DELETE istekleri için CSRF token gereklidir:
-
-```javascript
-fetch("/seo-images/images", {
-    method: "POST",
-    headers: {
-        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
-            .content,
-    },
-    body: formData,
-});
-```
-
----
-
-## 🐛 Sorun Giderme
-
-### Yaygın Sorunlar ve Çözümleri
-
-#### 1. Resimler Görünmüyor
-
-**Sorun:** `storage:link` oluşturulmamış.
-
-**Çözüm:**
+### Config Cache'i Temizleyin
 
 ```bash
-php artisan storage:link
-```
-
-#### 2. AVIF Dönüştürme Hatası
-
-**Sorun:** PHP'de AVIF desteği yok.
-
-**Çözüm:** AVIF desteği opsiyoneldir. Sistem otomatik olarak atlar ve WebP/JPG kullanır.
-
-#### 3. Resim Yükleme Hatası
-
-**Sorun:** Dosya boyutu limiti aşıldı.
-
-**Çözüm:** `config/seo-images.php` dosyasında `max_file_size` değerini artırın:
-
-```php
-'max_file_size' => 20480, // 20MB
-```
-
-Ayrıca `php.ini` dosyasında:
-
-```ini
-upload_max_filesize = 20M
-post_max_size = 20M
-```
-
-#### 4. Modal Açılmıyor
-
-**Sorun:** Bootstrap 5 yüklenmemiş.
-
-**Çözüm:** Bootstrap 5 CSS ve JS dosyalarını yükleyin:
-
-```html
-<link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-/>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-```
-
-#### 5. CSS Değişiklikleri Görünmüyor
-
-**Sorun:** Cache sorunu.
-
-**Çözüm:**
-
-```bash
-php artisan view:clear
 php artisan config:clear
-php artisan vendor:publish --tag=seo-images --force
-```
-
-Tarayıcıda hard refresh yapın (Ctrl+F5).
-
-#### 6. Srcset Dosyaları 404 Hatası Veriyor
-
-**Sorun:** Eski resimler için srcset dosyaları oluşturulmamış.
-
-**Çözüm:** Sistem otomatik olarak kontrol eder ve srcset dosyaları yoksa tek bir URL kullanır. Yeni yüklenen resimler için otomatik olarak srcset dosyaları oluşturulur.
-
-#### 7. Memory Exhaustion Hatası (Büyük Resimler)
-
-**Sorun:** `Allowed memory size exhausted` hatası alıyorsunuz.
-
-**Çözüm:** Sistem otomatik olarak memory limit'i artırır:
-
--   10MB+ dosyalar için 512MB
--   5-10MB dosyalar için 256MB
--   Diğer dosyalar için 128MB (minimum)
-
-Eğer hala sorun yaşıyorsanız, `php.ini` dosyasında memory limit'i artırın:
-
-```ini
-memory_limit = 512M
-```
-
-#### 8. Modal İçinde Resimler Düzgün Görünmüyor
-
-**Sorun:** Galeri veya detay panelinde resimler düzgün görünmüyor.
-
-**Çözüm:** Sistem artık tüm resimleri `<picture>` etiketi ile gösterir. Tarayıcı cache'ini temizleyin (Ctrl+F5) ve asset'leri yeniden yayınlayın:
-
-```bash
-php artisan vendor:publish --tag=seo-images --force
+php artisan cache:clear
 php artisan view:clear
 ```
 
----
+### Route'ları Kontrol Edin
 
-## 🤝 Katkıda Bulunma
-
-Katkılarınızı bekliyoruz! Lütfen:
-
-1. Fork edin
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Commit edin (`git commit -m 'Add amazing feature'`)
-4. Push edin (`git push origin feature/amazing-feature`)
-5. Pull Request açın
-
----
+```bash
+php artisan route:list --path=seo-images
+```
 
 ## 📄 Lisans
 
-MIT License - Detaylar için `LICENSE` dosyasına bakın.
+MIT License
+
+**Yazar:** Tuna Şahin
+
+## 🤝 Katkıda Bulunma
+
+Bu paket açık kaynaklıdır. Katkılarınızı bekliyoruz!
+
+## 📞 Destek
+
+Sorularınız için issue açabilir veya yazara ulaşabilirsiniz.
 
 ---
 
-## 👤 Yazar
-
-**Tuna Şahin**
-
--   Email: h.tunasahn@gmail.com
-
----
-
-## 🙏 Teşekkürler
-
--   [Intervention Image](https://image.intervention.io/) - Resim işleme kütüphanesi
--   [Spatie Image Optimizer](https://github.com/spatie/image-optimizer) - Resim optimizasyonu
--   [Bootstrap](https://getbootstrap.com/) - UI framework
-
----
-
-## 📚 Ek Kaynaklar
-
--   [Google Web.dev - Responsive Images](https://web.dev/fast/#optimize-your-images)
--   [MDN - Picture Element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture)
--   [Laravel Documentation](https://laravel.com/docs)
-
----
-
----
-
-## 📝 Changelog
-
-### v2.0+ (2025-12-10)
-
-#### Yeni Özellikler
-
--   ✅ Galeri ve detay panelinde `<picture>` etiketi kullanımı
--   ✅ Format ve boyut gösterimi (button olarak, tıklanabilir)
--   ✅ Picture ve img için ayrı class/ID desteği
--   ✅ Popover silme onayı sistemi
--   ✅ Empty state tasarımı
--   ✅ Memory optimizasyonu (büyük resimler için)
--   ✅ Modal 100% height desteği
-
-#### Değişiklikler
-
--   ⚠️ `@seopicture` direktifinden `alt` ve `fetchPriority` parametreleri kaldırıldı
--   ✅ Alt etiketi artık veritabanından otomatik alınıyor
--   ✅ FetchPriority varsayılan olarak `low` kullanılıyor
--   ✅ Tüm resim gösterimleri `<picture>` etiketi ile
-
-#### Düzeltmeler
-
--   🐛 Delete popover tekrar açılma sorunu düzeltildi
--   🐛 Modal açıldığında seçimlerin temizlenmesi düzeltildi
--   🐛 Memory exhaustion hatası için optimizasyon yapıldı
--   🐛 Format ve boyut gösterimi eklendi
-
----
-
-**⭐ Bu paketi beğendiyseniz yıldız vermeyi unutmayın!**
+**Versiyon:** 1.0.0  
+**Son Güncelleme:** 2025

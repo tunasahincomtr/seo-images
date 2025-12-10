@@ -1,9 +1,8 @@
 <?php
 
-namespace Tunasahin\SeoImages;
+namespace TunaSahin\SeoImages;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 
 class SeoImagesServiceProvider extends ServiceProvider
@@ -13,15 +12,14 @@ class SeoImagesServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Config dosyasını merge et
         $this->mergeConfigFrom(
-            __DIR__.'/../config/seo-images.php',
+            __DIR__ . '/../config/seo-images.php',
             'seo-images'
         );
 
-        // PictureService'i singleton olarak kaydet
-        $this->app->singleton('seo-images.picture', function ($app) {
-            return new \Tunasahin\SeoImages\Services\PictureService();
+        // Bind directive service
+        $this->app->singleton('seo-images.directive', function ($app) {
+            return new Directives\SeoImagesDirective();
         });
     }
 
@@ -30,113 +28,157 @@ class SeoImagesServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Migration dosyalarını yayınla
-        $this->loadMigrationsFrom(__DIR__.'/Database/Migrations');
-
-        // View dosyalarını yayınla
-        $this->loadViewsFrom(__DIR__.'/resources/views', 'seo-images');
-
-        // Asset dosyalarını yayınla
+        // Publish config
         $this->publishes([
-            __DIR__.'/../config/seo-images.php' => config_path('seo-images.php'),
-            __DIR__.'/resources/views' => resource_path('views/vendor/seo-images'),
-            __DIR__.'/resources/js' => public_path('vendor/seo-images/js'),
-            __DIR__.'/resources/css' => public_path('vendor/seo-images/css'),
-        ], 'seo-images');
+            __DIR__ . '/../config/seo-images.php' => config_path('seo-images.php'),
+        ], 'seo-images-config');
 
-        // Blade direktiflerini kaydet
+        // Publish migrations
+        $this->publishes([
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+        ], 'seo-images-migrations');
+
+        // Publish views
+        $this->publishes([
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/seo-images'),
+        ], 'seo-images-views');
+
+        // Publish assets
+        $this->publishes([
+            __DIR__ . '/../resources/assets' => public_path('vendor/seo-images'),
+        ], 'seo-images-assets');
+
+        // Load views
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'seo-images');
+
+        // Register routes
+        $this->registerRoutes();
+
+        // Register Blade directives
         $this->registerBladeDirectives();
-
-        // Route'ları yükle
-        $this->loadRoutes();
     }
 
     /**
-     * Blade direktiflerini kaydet
+     * Register package routes.
+     */
+    protected function registerRoutes(): void
+    {
+        Route::middleware(config('seo-images.route_middleware', ['web', 'auth']))
+            ->prefix('seo-images')
+            ->group(function () {
+                Route::get('/list', [Controllers\SeoImagesController::class, 'list'])
+                    ->name('seo-images.list');
+                
+                Route::post('/upload', [Controllers\SeoImagesController::class, 'upload'])
+                    ->name('seo-images.upload');
+                
+                Route::post('/{id}/update-meta', [Controllers\SeoImagesController::class, 'updateMeta'])
+                    ->name('seo-images.update-meta');
+                
+                Route::delete('/{id}', [Controllers\SeoImagesController::class, 'delete'])
+                    ->name('seo-images.delete');
+
+                Route::post('/render', [Controllers\SeoImagesController::class, 'render'])
+                    ->name('seo-images.render');
+
+                // Test route
+                Route::get('/test', function () {
+                    return view('seo-images::test');
+                })->name('seo-images.test');
+            });
+    }
+
+    /**
+     * Register Blade directives.
      */
     protected function registerBladeDirectives(): void
     {
-        // @imageInput direktifi
-        // Kullanım: @imageInput('field_name') veya @imageInput('field_name', true) (çoklu seçim için)
-        Blade::directive('imageInput', function ($expression) {
-            // Expression'ı parse et
-            // Örnek: ('image_path') veya ('image_path', true)
+        // @seoinput directive
+        \Blade::directive('seoinput', function ($expression) {
+            if (empty($expression)) {
+                return "<?php echo ''; ?>";
+            }
+            
+            // Remove outer parentheses if present
             $expression = trim($expression, '()');
             
-            // Eğer boşsa varsayılan değer (tekli seçim için 'image')
-            if (empty($expression)) {
-                return "<?php echo view('seo-images::components.image-input', [
-                    'name' => 'image',
-                    'multiple' => false
-                ])->render(); ?>";
-}
-
-// Parametreleri parse et
-$params = array_map('trim', explode(',', $expression));
-
-// İlk parametre name (string) - varsayılan: tekli için 'image', çoklu için 'images'
-$nameParam = $params[0] ?? "'image'";
-// Tırnak işaretlerini temizle ve tekrar ekle (güvenli string için)
-$nameParam = trim($nameParam, " '\"");
-$name = "'" . addslashes($nameParam) . "'";
-
-// İkinci parametre multiple (boolean, varsayılan false)
-$multiple = isset($params[1]) ? trim($params[1]) : 'false';
-// Boolean değerleri kontrol et
-if (strtolower($multiple) === 'true' || $multiple === '1') {
-$multiple = 'true';
-} else {
-$multiple = 'false';
-}
-
-return "<?php echo view('seo-images::components.image-input', [
-                'name' => {$name},
-                'multiple' => {$multiple}
-            ])->render(); ?>";
-});
-
-// @seopicture direktifi
-// Kullanım: 
-// - @seopicture('path') - Sadece path (alt text ve title veritabanından alınır)
-// - @seopicture('path', 'img-class') - Path ve img class
-// - @seopicture('path', 'img-class', 'img-id') - Path, img class ve img id
-// - @seopicture('path', 'img-class', 'img-id', 'picture-class', 'picture-id') - Tüm class ve id'ler
-Blade::directive('seopicture', function ($expression) {
-// Expression boşsa veya sadece path varsa
-if (empty(trim($expression))) {
-return "<?php echo ''; ?>";
-}
-
-// Expression'ı parse et
-return "<?php 
-                \$params = [{$expression}];
-                \$path = \$params[0] ?? '';
-                \$imgClass = \$params[1] ?? null;
-                \$imgId = \$params[2] ?? null;
-                \$pictureClass = \$params[3] ?? null;
-                \$pictureId = \$params[4] ?? null;
+            // Check if we have multiple arguments (comma separated)
+            if (strpos($expression, ',') !== false) {
+                // Split by comma
+                $pos = strpos($expression, ',');
+                $inputNamePart = trim(substr($expression, 0, $pos));
+                $modePart = trim(substr($expression, $pos + 1));
                 
-                echo app('seo-images.picture')->render(
-                    \$path, 
-                    \$imgClass, 
-                    \$imgId, 
-                    \$pictureClass, 
-                    \$pictureId
-                );
-            ?>";
-});
+                return "<?php 
+                    \$inputName = {$inputNamePart};
+                    \$mode = {$modePart};
+                    if (is_string(\$inputName)) {
+                        \$inputName = trim(\$inputName, ' \\'\"');
+                    }
+                    if (is_string(\$mode)) {
+                        \$mode = trim(\$mode, ' \\'\"');
+                    } else {
+                        \$mode = 'single';
+                    }
+                    echo app('seo-images.directive')->renderSeoInput(\$inputName, \$mode); 
+                ?>";
+            } else {
+                // Single argument
+                return "<?php 
+                    \$inputName = {$expression};
+                    if (is_string(\$inputName)) {
+                        \$inputName = trim(\$inputName, ' \\'\"');
+                    }
+                    echo app('seo-images.directive')->renderSeoInput(\$inputName, 'single'); 
+                ?>";
+            }
+        });
+
+        // @seoimages directive
+        \Blade::directive('seoimages', function ($expression) {
+            // Laravel Blade passes the expression as a string
+            // Expression format: 'path' or 'path', ['options']
+            if (empty($expression)) {
+                return "<?php echo ''; ?>";
+            }
+            
+            // Remove outer parentheses if present
+            $expression = trim($expression, '()');
+            
+            // Check if we have multiple arguments (comma separated)
+            if (strpos($expression, ',') !== false) {
+                // Split by comma, handling array syntax carefully
+                $pos = strpos($expression, ',');
+                $folderPathPart = substr($expression, 0, $pos);
+                $optionsPart = trim(substr($expression, $pos + 1));
+                
+                return "<?php 
+                    \$folderPath = {$folderPathPart};
+                    \$options = {$optionsPart};
+                    if (is_string(\$folderPath)) {
+                        \$folderPath = trim(\$folderPath, ' \\'\"');
+                    }
+                    if (!is_array(\$options)) {
+                        \$options = [];
+                    }
+                    echo app('seo-images.directive')->renderSeoImages(\$folderPath, \$options); 
+                ?>";
+            } else {
+                // Single argument
+                return "<?php 
+                    \$folderPath = {$expression};
+                    if (is_string(\$folderPath)) {
+                        \$folderPath = trim(\$folderPath, ' \\'\"');
+                    }
+                    echo app('seo-images.directive')->renderSeoImages(\$folderPath, []); 
+                ?>";
+            }
+        });
+
+        // @seoimagesScripts directive
+        \Blade::directive('seoimagesScripts', function () {
+            return "<?php echo app('seo-images.directive')->renderScripts(); ?>";
+        });
+    }
 }
 
-/**
-* Route'ları yükle
-*/
-protected function loadRoutes(): void
-{
-Route::middleware(['web'])
-->prefix('seo-images')
-->name('seo-images.')
-->group(function () {
-require __DIR__.'/../routes/web.php';
-});
-}
-}
