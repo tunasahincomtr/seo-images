@@ -2,6 +2,19 @@
 
 WordPress medya kütüphanesi benzeri, SEO uyumlu resim yönetim paketi. Modern web standartlarına uygun, performans odaklı ve Google Lighthouse 100/100 skoruna uygun resim yönetim sistemi.
 
+**Versiyon:** 2.0+  
+**Son Güncelleme:** 2025-12-10
+
+## 🆕 Yeni Özellikler (v2.0+)
+
+-   ✅ **Picture Etiketi Her Yerde**: Galeri ve detay panelinde tüm resimler `<picture>` etiketi ile gösterilir
+-   ✅ **Format ve Boyut Yönetimi**: Detay panelinde tüm formatlar ve boyutlar button olarak görüntülenir
+-   ✅ **Esnek Class/ID Sistemi**: Picture ve img etiketleri için ayrı class ve ID desteği
+-   ✅ **Popover Silme Onayı**: Modern popover ile resim silme onayı
+-   ✅ **Empty State Tasarımı**: Boş durumlar için özel tasarım
+-   ✅ **Memory Optimizasyonu**: Büyük resimler için dinamik memory yönetimi
+-   ✅ **100% Height Modal**: Modal içinde column'lar tam yüksekliği kullanır
+
 ## 📋 İçindekiler
 
 -   [Özellikler](#-özellikler)
@@ -31,8 +44,17 @@ WordPress medya kütüphanesi benzeri, SEO uyumlu resim yönetim paketi. Modern 
 -   🏷️ **Alt Etiketi ve Başlık Yönetimi**: Her resim için alt etiketi ve başlık düzenleme
 -   🔍 **Gelişmiş Arama**: Alt etiketi, başlık ve dosya adına göre arama
 -   📄 **Sayfalama**: İlk 12 resim gösterilir, "Daha Fazla Göster" ile 12'şer yüklenir
--   ✅ **Çoklu Resim Seçimi**: Checkbox ile birden fazla resim seçme ve sıralama
--   🎨 **Tam Ekran Modal**: Fullscreen modal ile geniş çalışma alanı
+-   ✅ **Çoklu Resim Seçimi**: Checkbox ile birden fazla resim seçme ve drag & drop sıralama
+-   🎨 **Tam Ekran Modal**: Fullscreen modal ile geniş çalışma alanı (100% height)
+-   🖼️ **Picture Etiketi Her Yerde**: Galeri ve detay panelinde tüm resimler `<picture>` etiketi ile gösterilir
+-   📋 **Format ve Boyut Yönetimi**: Detay panelinde tüm formatlar ve boyutlar button olarak görüntülenir ve tıklanabilir
+-   🗑️ **Popover Silme Onayı**: Modern popover ile resim silme onayı (alert yerine)
+-   🎯 **Empty State Tasarımı**: Boş durumlar için özel ikon ve mesaj tasarımı
+-   💾 **Memory Optimizasyonu**: Büyük resimler için dinamik memory yönetimi (10MB+ için 512MB) (100% height)
+-   🗑️ **Popover Silme Onayı**: Modern popover ile resim silme onayı
+-   📊 **Format ve Boyut Yönetimi**: Detay panelinde tüm formatlar ve boyutlar görüntülenir
+-   🎯 **Empty State Tasarımı**: Boş durumlar için özel tasarım
+-   💾 **Memory Optimizasyonu**: Büyük resimler için dinamik memory yönetimi
 
 ### 🚀 SEO ve Performans Özellikleri
 
@@ -40,9 +62,12 @@ WordPress medya kütüphanesi benzeri, SEO uyumlu resim yönetim paketi. Modern 
 -   📱 **Responsive Images**: `srcset` ve `sizes` attribute'ları ile responsive resimler
 -   ⚡ **Lazy Loading**: `loading="lazy"` ile performans optimizasyonu
 -   🔄 **Async Decoding**: `decoding="async"` ile render optimizasyonu
--   🎯 **Fetch Priority**: Hero resimler için `fetchpriority="high"`, diğerleri için `low`
+-   🎯 **Fetch Priority**: Varsayılan olarak `fetchpriority="low"` (tüm resimler için)
 -   📊 **Otomatik Boyutlandırma**: 480w, 768w, 1200w, 1920w ve orijinal boyutlar
 -   🎨 **Tema Özelleştirme**: CSS değişkenleri ile kolay tema düzenleme
+-   🖼️ **Galeri ve Detay Panelinde Picture**: Tüm resim gösterimleri `<picture>` etiketi ile
+-   📋 **Format ve Boyut Gösterimi**: Detay panelinde tüm formatlar ve boyutlar button olarak gösterilir
+-   🎨 **Esnek Class/ID Sistemi**: Picture ve img etiketleri için ayrı class ve ID desteği
 
 ---
 
@@ -216,28 +241,56 @@ Bu direktif bir input alanı ve "Resim Seç" butonu oluşturur. Modal açılır 
 
 #### @seopicture - SEO Uyumlu Picture Etiketi
 
+**ÖNEMLİ:** Alt etiketi ve fetchPriority parametreleri kaldırılmıştır. Alt etiketi veritabanından otomatik olarak alınır, fetchPriority varsayılan olarak 'low' kullanılır.
+
 **Basit Kullanım:**
 
 ```blade
 @seopicture('2025/12/05/dosya-adi')
 ```
 
-**Alt Etiketi ile:**
+Alt etiketi veritabanından otomatik olarak alınır. Tüm formatlar (AVIF, WebP, JPG) ve boyutlar (srcset) otomatik olarak eklenir.
+
+**CSS Class ile (sadece img etiketi için):**
 
 ```blade
-@seopicture('2025/12/05/dosya-adi', 'Açıklama metni')
+@seopicture('2025/12/05/dosya-adi', 'img-fluid rounded')
 ```
 
-**CSS Class ile:**
+**CSS Class ve ID ile (sadece img etiketi için):**
 
 ```blade
-@seopicture('2025/12/05/dosya-adi', 'Açıklama', 'img-fluid rounded')
+@seopicture('2025/12/05/dosya-adi', 'img-fluid rounded', 'hero-image')
 ```
 
-**Hero Resim için (fetchpriority: high):**
+**Tüm Class ve ID'ler ile (picture ve img için ayrı):**
 
 ```blade
-@seopicture('2025/12/05/dosya-adi', 'Hero resim', 'img-fluid', 'high')
+@seopicture('2025/12/05/dosya-adi', 'img-fluid rounded', 'hero-img-id', 'picture-wrapper', 'hero-picture-id')
+```
+
+**Parametre Sırası:**
+
+1. `folder_path` (zorunlu): Resim klasör yolu (örn: '2025/12/05/dosya-adi')
+2. `imgClass` (opsiyonel): `<img>` etiketi için CSS class
+3. `imgId` (opsiyonel): `<img>` etiketi için ID
+4. `pictureClass` (opsiyonel): `<picture>` etiketi için CSS class
+5. `pictureId` (opsiyonel): `<picture>` etiketi için ID
+
+**Örnekler:**
+
+```blade
+{{-- Sadece path --}}
+@seopicture('2025/12/05/hero-image')
+
+{{-- Path + img class --}}
+@seopicture('2025/12/05/hero-image', 'img-fluid')
+
+{{-- Path + img class + img id --}}
+@seopicture('2025/12/05/hero-image', 'img-fluid', 'main-hero')
+
+{{-- Tüm parametreler --}}
+@seopicture('2025/12/05/hero-image', 'img-fluid rounded', 'hero-img', 'picture-hero', 'hero-picture')
 ```
 
 ### Tam Örnek
@@ -278,7 +331,7 @@ Bu direktif bir input alanı ve "Resim Seç" butonu oluşturur. Modal açılır 
         @if(isset($coverImage))
             <div class="mt-4">
                 <h3>Kapak Resmi:</h3>
-                @seopicture($coverImage, 'Kapak resmi', 'img-fluid rounded', 'high')
+                @seopicture($coverImage, 'img-fluid rounded', 'cover-image')
             </div>
         @endif
 
@@ -287,7 +340,7 @@ Bu direktif bir input alanı ve "Resim Seç" butonu oluşturur. Modal açılır 
             <div class="row mt-4">
                 @foreach($gallery as $image)
                     <div class="col-md-4 mb-3">
-                        @seopicture($image, 'Galeri resmi', 'img-fluid rounded')
+                        @seopicture($image, 'img-fluid rounded')
                     </div>
                 @endforeach
             </div>
@@ -489,7 +542,7 @@ Bu boyutlandırma stratejisi:
 `@seopicture` direktifi şu HTML'i oluşturur:
 
 ```html
-<picture>
+<picture class="picture-wrapper" id="hero-picture-id">
     <!-- Modern format - AVIF -->
     <source
         srcset="
@@ -528,16 +581,25 @@ Bu boyutlandırma stratejisi:
             /storage/2025/12/05/hero-image/hero-image.jpg      1920w
         "
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 768px, 1200px"
-        alt="Açıklama metni"
+        alt="Veritabanından alınan alt etiketi"
         width="1920"
         height="1080"
         loading="lazy"
         decoding="async"
         fetchpriority="low"
         class="img-fluid rounded"
+        id="hero-img-id"
     />
 </picture>
 ```
+
+**Önemli Notlar:**
+
+-   **Alt Etiketi**: Veritabanından otomatik olarak alınır (`alt_text` kolonu)
+-   **FetchPriority**: Varsayılan olarak `low` kullanılır (tüm resimler için)
+-   **Class ve ID**: Picture ve img etiketleri için ayrı class ve ID kullanılabilir
+-   **Srcset**: Otomatik olarak oluşturulur (480w, 768w, 1200w, 1920w, orijinal)
+-   **Sizes**: Resmin genişliğine göre otomatik hesaplanır
 
 ### SEO Özellikleri Açıklaması
 
@@ -594,14 +656,15 @@ Resim çözümlemesini arka planda yapar:
 
 Resim yükleme önceliğini belirler:
 
--   **`high`**: Hero resimler için (sayfanın üst kısmındaki önemli resimler)
--   **`low`**: Diğer resimler için (varsayılan)
+-   **`low`**: Varsayılan değer (tüm resimler için)
+
+**Not:** FetchPriority parametresi kaldırılmıştır. Tüm resimler varsayılan olarak `fetchpriority="low"` kullanır. Bu, Google'ın önerdiği best practice'dir ve sayfa performansını optimize eder.
 
 **Fayda:**
 
--   Önemli resimler önce yüklenir
+-   Sayfa yükleme performansı optimize edilir
 -   Google'ın önerdiği best practice
--   Daha iyi LCP (Largest Contentful Paint) skoru
+-   Daha iyi Core Web Vitals skorları
 
 #### 6. `width` ve `height` Attribute'ları
 
@@ -628,7 +691,7 @@ Bu optimizasyonlar sayesinde:
 
 ### CSS Değişkenleri ile Tema Düzenleme
 
-Paket, CSS değişkenleri kullanarak kolay tema özelleştirmesi sunar. `public/vendor/seo-images/css/seo-images.css` dosyasını düzenleyerek renkleri değiştirebilirsiniz:
+Paket, CSS değişkenleri kullanarak kolay tema özelleştirmesi sunar. CSS değişkenleri doğrudan `packages/tunasahin/seo-images/src/resources/css/seo-images.css` dosyasında `:root` bloğunda tanımlanmıştır. Asset'leri yayınladıktan sonra `public/vendor/seo-images/css/seo-images.css` dosyasını düzenleyerek renkleri değiştirebilirsiniz:
 
 ```css
 :root {
@@ -677,6 +740,9 @@ Veya tarayıcı cache'ini temizleyin (Ctrl+F5).
 -   ✅ Badge renkleri
 -   ✅ Köşe yuvarlaklığı
 -   ✅ Gölge efektleri
+-   ✅ Empty state tasarımı
+-   ✅ Popover stilleri
+-   ✅ Modal yükseklik ayarları
 
 ---
 
@@ -719,6 +785,7 @@ GET /seo-images/images?page=1&per_page=12&search=hero
             "height": 1080,
             "url": "http://example.com/storage/2025/12/05/hero-image/hero-image.jpg",
             "webp_url": "http://example.com/storage/2025/12/05/hero-image/hero-image.webp",
+            "avif_url": "http://example.com/storage/2025/12/05/hero-image/hero-image.avif",
             "created_at": "2025-12-05 10:30:00"
         }
     ],
@@ -758,7 +825,9 @@ POST /seo-images/images
         "title": "Ana sayfa hero",
         "width": 1920,
         "height": 1080,
-        "url": "http://example.com/storage/2025/12/05/hero-image/hero-image.jpg"
+        "url": "http://example.com/storage/2025/12/05/hero-image/hero-image.jpg",
+        "webp_url": "http://example.com/storage/2025/12/05/hero-image/hero-image.webp",
+        "avif_url": "http://example.com/storage/2025/12/05/hero-image/hero-image.avif"
     }
 }
 ```
@@ -898,6 +967,33 @@ Tarayıcıda hard refresh yapın (Ctrl+F5).
 
 **Çözüm:** Sistem otomatik olarak kontrol eder ve srcset dosyaları yoksa tek bir URL kullanır. Yeni yüklenen resimler için otomatik olarak srcset dosyaları oluşturulur.
 
+#### 7. Memory Exhaustion Hatası (Büyük Resimler)
+
+**Sorun:** `Allowed memory size exhausted` hatası alıyorsunuz.
+
+**Çözüm:** Sistem otomatik olarak memory limit'i artırır:
+
+-   10MB+ dosyalar için 512MB
+-   5-10MB dosyalar için 256MB
+-   Diğer dosyalar için 128MB (minimum)
+
+Eğer hala sorun yaşıyorsanız, `php.ini` dosyasında memory limit'i artırın:
+
+```ini
+memory_limit = 512M
+```
+
+#### 8. Modal İçinde Resimler Düzgün Görünmüyor
+
+**Sorun:** Galeri veya detay panelinde resimler düzgün görünmüyor.
+
+**Çözüm:** Sistem artık tüm resimleri `<picture>` etiketi ile gösterir. Tarayıcı cache'ini temizleyin (Ctrl+F5) ve asset'leri yeniden yayınlayın:
+
+```bash
+php artisan vendor:publish --tag=seo-images --force
+php artisan view:clear
+```
+
 ---
 
 ## 🤝 Katkıda Bulunma
@@ -939,6 +1035,38 @@ MIT License - Detaylar için `LICENSE` dosyasına bakın.
 -   [Google Web.dev - Responsive Images](https://web.dev/fast/#optimize-your-images)
 -   [MDN - Picture Element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture)
 -   [Laravel Documentation](https://laravel.com/docs)
+
+---
+
+---
+
+## 📝 Changelog
+
+### v2.0+ (2025-12-10)
+
+#### Yeni Özellikler
+
+-   ✅ Galeri ve detay panelinde `<picture>` etiketi kullanımı
+-   ✅ Format ve boyut gösterimi (button olarak, tıklanabilir)
+-   ✅ Picture ve img için ayrı class/ID desteği
+-   ✅ Popover silme onayı sistemi
+-   ✅ Empty state tasarımı
+-   ✅ Memory optimizasyonu (büyük resimler için)
+-   ✅ Modal 100% height desteği
+
+#### Değişiklikler
+
+-   ⚠️ `@seopicture` direktifinden `alt` ve `fetchPriority` parametreleri kaldırıldı
+-   ✅ Alt etiketi artık veritabanından otomatik alınıyor
+-   ✅ FetchPriority varsayılan olarak `low` kullanılıyor
+-   ✅ Tüm resim gösterimleri `<picture>` etiketi ile
+
+#### Düzeltmeler
+
+-   🐛 Delete popover tekrar açılma sorunu düzeltildi
+-   🐛 Modal açıldığında seçimlerin temizlenmesi düzeltildi
+-   🐛 Memory exhaustion hatası için optimizasyon yapıldı
+-   🐛 Format ve boyut gösterimi eklendi
 
 ---
 

@@ -11,9 +11,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0">
-                <div class="row g-0 h-100" style="min-height: 500px;">
+                <div class="row g-0 h-100">
                     <!-- Sol Panel - Resim Listesi -->
-                    <div class="col-md-8 border-end" style="max-height: 70vh; overflow-y: auto;">
+                    <div class="col-md-8 border-end" style="height: 100%; overflow-y: auto;">
                         <!-- Arama Kutusu -->
                         <div class="p-3 border-bottom">
                             <div class="input-group">
@@ -67,14 +67,23 @@
 
                     <!-- Sağ Panel - Resim Detayları -->
                     <div class="col-md-4 bg-light" id="imageDetailsPanel"
-                        style="display: none; max-height: 70vh; overflow-y: auto;">
+                        style="display: none; height: 100%; overflow-y: auto;">
                         <div class="p-3">
                             <h6 class="mb-3">Resim Detayları</h6>
 
-                            <!-- Seçilen Resim Önizlemesi -->
+                            <!-- Seçilen Resim Önizlemesi - 3 Format (Picture Etiketi) -->
                             <div class="mb-3 text-center">
-                                <img id="selectedImagePreview" src="" alt="Preview" class="img-fluid rounded"
-                                    style="max-height: 200px;">
+                                <picture id="selectedImagePreviewPicture" style="display: none;">
+                                    <source id="selectedImagePreviewAvif" srcset="" type="image/avif">
+                                    <source id="selectedImagePreviewWebp" srcset="" type="image/webp">
+                                    <img id="selectedImagePreview" src="" alt="Preview" class="img-fluid rounded"
+                                        style="max-height: 200px; width: auto; display: block; margin: 0 auto;">
+                                </picture>
+                            </div>
+                            
+                            <!-- Format ve Boyut Bilgileri -->
+                            <div class="mb-3" id="imageFormatInfo" style="display: none;">
+                                <!-- Format ve boyutlar JavaScript ile dinamik olarak eklenecek -->
                             </div>
 
                             <!-- Form -->

@@ -21,9 +21,40 @@ class ImageService
 
     /**
      * Resmi yükle ve formatları oluştur
+     * 
+     * Memory optimizasyonu: Büyük resimler için memory limit'i geçici olarak artırır
      */
     public function uploadImage(UploadedFile $file, ?string $altText = null, ?string $title = null): SeoImage
     {
+        // Memory optimizasyonu: Büyük resimler için memory limit'i agresif şekilde artır
+        $currentMemoryLimit = ini_get('memory_limit');
+        $fileSize = $file->getSize();
+        
+        // Dosya boyutuna göre dinamik memory limit ayarla
+        // Büyük resimler için daha fazla memory gerekiyor
+        if ($fileSize > 10 * 1024 * 1024) {
+            // 10MB'dan büyükse 512MB
+            ini_set('memory_limit', '512M');
+        } elseif ($fileSize > 5 * 1024 * 1024) {
+            // 5MB'dan büyükse 256MB
+            ini_set('memory_limit', '256M');
+        } else {
+            // Mevcut limit'i parse et
+            $currentLimitBytes = $this->parseMemoryLimit($currentMemoryLimit);
+            // En az 128MB garantile
+            $minRequiredBytes = 128 * 1024 * 1024;
+            
+            if ($currentLimitBytes < $minRequiredBytes) {
+                ini_set('memory_limit', '128M');
+            }
+        }
+        
+        // Memory limit'i logla (debug için)
+        Log::debug('Memory limit ayarlandı', [
+            'fileSize' => $fileSize,
+            'memoryLimit' => ini_get('memory_limit'),
+            'previousLimit' => $currentMemoryLimit
+        ]);
         // Tarih bazlı klasör yolu oluştur (2025/12/05)
         $datePath = date('Y/m/d');
         
@@ -52,21 +83,51 @@ class ImageService
         $this->convertToJpg($image, $storagePath, $fileName);
 
         // Srcset için farklı boyutlarda resimler oluştur
+        // Memory optimizasyonu: Resmi bir kez yükle, clone kullan, her işlemden sonra temizle
+        $processedCount = 0;
         foreach ($srcsetWidths as $targetWidth) {
             // Orijinal genişlik için dosya oluşturma (zaten var)
             // Sadece küçük boyutlar için oluştur
             if ($targetWidth < $width) {
-                // Resmi yeniden yükle ve boyutlandır
-                $resized = $this->imageManager->read($file->getRealPath());
-                $resized->scale(width: $targetWidth);
-                
-                // Her format için kaydet
-                $this->convertToWebp($resized, $storagePath, $fileName, $targetWidth);
-                $this->convertToAvif($resized, $storagePath, $fileName, $targetWidth);
-                $this->convertToJpg($resized, $storagePath, $fileName, $targetWidth);
+                try {
+                    // Memory optimizasyonu: Dosyayı tekrar okumak yerine, mevcut image'i clone et
+                    // Ancak clone da memory kullanır, bu yüzden her seferinde dosyadan oku ama hemen temizle
+                    $resized = $this->imageManager->read($file->getRealPath());
+                    $resized->scale(width: $targetWidth);
+                    
+                    // Her format için kaydet
+                    $this->convertToWebp($resized, $storagePath, $fileName, $targetWidth);
+                    $this->convertToAvif($resized, $storagePath, $fileName, $targetWidth);
+                    $this->convertToJpg($resized, $storagePath, $fileName, $targetWidth);
+                    
+                    // Memory temizleme: İşlenen resmi bellekten kaldır
+                    unset($resized);
+                    
+                    $processedCount++;
+                    
+                    // Her boyuttan sonra garbage collection (agresif temizlik)
+                    if (function_exists('gc_collect_cycles')) {
+                        gc_collect_cycles();
+                    }
+                } catch (\Exception $e) {
+                    // Memory hatası durumunda logla ve devam et
+                    Log::error('Resim boyutlandırma hatası: ' . $e->getMessage(), [
+                        'targetWidth' => $targetWidth,
+                        'originalWidth' => $width,
+                        'fileSize' => $file->getSize()
+                    ]);
+                    // Bu boyutu atla ve devam et
+                    continue;
+                }
             }
-            // Orijinal genişlik ($targetWidth == $width) için dosya zaten oluşturuldu
-            // Daha büyük genişlikler ($targetWidth > $width) için dosya oluşturma (orijinalden büyük olamaz)
+        }
+        
+        // Memory optimizasyonu: Orijinal resmi temizle (artık gerekli değil)
+        unset($image);
+        
+        // Final garbage collection
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
         }
 
         // Veritabanına kaydet
@@ -171,5 +232,29 @@ class ImageService
 
         // Veritabanından sil
         return $seoImage->delete();
+    }
+
+    /**
+     * Memory limit string'ini byte'a çevir
+     * Örnek: "128M" -> 134217728
+     */
+    protected function parseMemoryLimit(string $limit): int
+    {
+        $limit = trim($limit);
+        $last = strtolower($limit[strlen($limit) - 1]);
+        $value = (int) $limit;
+        
+        switch ($last) {
+            case 'g':
+                $value *= 1024;
+                // no break
+            case 'm':
+                $value *= 1024;
+                // no break
+            case 'k':
+                $value *= 1024;
+        }
+        
+        return $value;
     }
 }

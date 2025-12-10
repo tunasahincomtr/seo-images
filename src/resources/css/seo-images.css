@@ -182,6 +182,11 @@
     cursor: pointer;
     transition: all 0.3s ease;
     background: #fff;
+    aspect-ratio: 1 / 1;
+    /* Kare görünüm için - tüm resimler aynı boyutta */
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
 }
 
 .image-item:hover {
@@ -195,11 +200,31 @@
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
-.image-item img {
+.image-item img,
+.image-item picture,
+.image-item-picture {
     width: 100%;
-    height: 150px;
+    height: 100%;
     object-fit: cover;
     display: block;
+    object-position: center;
+    flex: 1; /* Kalan alanı doldur */
+    /* Resmi ortadan göster */
+}
+
+.image-item-picture {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.image-item-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    flex: 1;
 }
 
 /* Silme Butonu - Resmin Üstünde Sağ Üst */
@@ -260,6 +285,43 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Empty State Stilleri */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    min-height: 300px;
+}
+
+.empty-state-icon {
+    color: #adb5bd;
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.empty-state-icon svg {
+    width: 64px;
+    height: 64px;
+}
+
+.empty-state-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 10px;
+}
+
+.empty-state-text {
+    font-size: 14px;
+    color: #6c757d;
+    max-width: 400px;
+    line-height: 1.6;
+    margin: 0;
 }
 
 .loading {
@@ -443,6 +505,7 @@
 /* Sağ Panel Stilleri */
 #imageDetailsPanel {
     border-left: 1px solid #dee2e6;
+    /* Display JavaScript ile kontrol edilir */
 }
 
 #imageDetailsPanel h6 {
@@ -600,15 +663,16 @@
 
 /* Silme Onay Popover */
 .delete-confirm-popover {
-    position: absolute;
-    z-index: 1060;
+    position: fixed;
+    z-index: 1070;
     background: #fff;
     border: 1px solid #dee2e6;
     border-radius: var(--seo-images-border-radius, 8px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     min-width: 280px;
-    max-width: 320px;
-    animation: popoverFadeIn 0.2s ease;
+    max-width: 400px;
+    animation: popoverFadeIn 0.3s ease;
+    pointer-events: auto;
 }
 
 @keyframes popoverFadeIn {
@@ -616,6 +680,7 @@
         opacity: 0;
         transform: translateY(-5px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

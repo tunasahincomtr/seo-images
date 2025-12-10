@@ -11,16 +11,18 @@ class PictureService
      * SEO uyumlu picture etiketi oluştur
      * 
      * @param string $folderPath Resim klasör yolu
-     * @param string|null $alt Alt etiketi (opsiyonel)
-     * @param string|null $class CSS class (opsiyonel)
-     * @param string $fetchPriority 'high' veya 'low' (varsayılan: 'low')
+     * @param string|null $imgClass CSS class (sadece img etiketi için)
+     * @param string|null $imgId ID (sadece img etiketi için)
+     * @param string|null $pictureClass CSS class (sadece picture etiketi için)
+     * @param string|null $pictureId ID (sadece picture etiketi için)
      * @return string
      */
     public function render(
         string $folderPath, 
-        ?string $alt = null, 
-        ?string $class = null,
-        string $fetchPriority = 'low'
+        ?string $imgClass = null,
+        ?string $imgId = null,
+        ?string $pictureClass = null,
+        ?string $pictureId = null
     ): string {
         $seoImage = SeoImage::where('folder_path', $folderPath)->first();
 
@@ -28,9 +30,19 @@ class PictureService
             return '';
         }
 
-        $alt = $alt ?? $seoImage->alt_text ?? '';
-        $classAttr = $class ? ' class="' . htmlspecialchars($class) . '"' : '';
-        $fetchPriority = in_array($fetchPriority, ['high', 'low', 'auto']) ? $fetchPriority : 'low';
+        // Alt text ve title veritabanından alınır
+        $alt = $seoImage->alt_text ?? '';
+        
+        // Picture etiketi için class ve id
+        $pictureClassAttr = $pictureClass ? ' class="' . htmlspecialchars($pictureClass) . '"' : '';
+        $pictureIdAttr = $pictureId ? ' id="' . htmlspecialchars($pictureId) . '"' : '';
+        
+        // Img etiketi için class ve id
+        $imgClassAttr = $imgClass ? ' class="' . htmlspecialchars($imgClass) . '"' : '';
+        $imgIdAttr = $imgId ? ' id="' . htmlspecialchars($imgId) . '"' : '';
+        
+        // FetchPriority varsayılan olarak 'low' (hero resimler için config'den değiştirilebilir)
+        $fetchPriority = 'low';
         
         $baseUrl = asset('storage/' . $seoImage->folder_path);
         $fileName = basename($seoImage->folder_path);
@@ -60,7 +72,7 @@ class PictureService
             }
         }
 
-        $html = '<picture' . $classAttr . '>';
+        $html = '<picture' . $pictureClassAttr . $pictureIdAttr . '>';
         
         // AVIF source (en modern format) - srcset ile
         if ($hasSrcsetFiles && $srcsetWidths && count($srcsetWidths) > 0) {
@@ -124,8 +136,12 @@ class PictureService
         $html .= ' decoding="async"';
         $html .= ' fetchpriority="' . $fetchPriority . '"';
         
-        if ($class) {
-            $html .= ' class="' . htmlspecialchars($class) . '"';
+        // Img etiketi için class ve id ekle
+        if ($imgClassAttr) {
+            $html .= $imgClassAttr;
+        }
+        if ($imgIdAttr) {
+            $html .= $imgIdAttr;
         }
         
         $html .= '>';

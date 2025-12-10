@@ -96,22 +96,33 @@ return "<?php echo view('seo-images::components.image-input', [
 });
 
 // @seopicture direktifi
-// Kullanım: @seopicture('path', 'alt', 'class', 'low|high')
+// Kullanım: 
+// - @seopicture('path') - Sadece path (alt text ve title veritabanından alınır)
+// - @seopicture('path', 'img-class') - Path ve img class
+// - @seopicture('path', 'img-class', 'img-id') - Path, img class ve img id
+// - @seopicture('path', 'img-class', 'img-id', 'picture-class', 'picture-id') - Tüm class ve id'ler
 Blade::directive('seopicture', function ($expression) {
 // Expression boşsa veya sadece path varsa
 if (empty(trim($expression))) {
 return "<?php echo ''; ?>";
 }
 
-// Expression'ı parse et - eval kullanarak güvenli şekilde
-// Örnek: @seopicture('path', 'alt text', 'img-fluid', 'high')
+// Expression'ı parse et
 return "<?php 
                 \$params = [{$expression}];
                 \$path = \$params[0] ?? '';
-                \$alt = \$params[1] ?? null;
-                \$class = \$params[2] ?? null;
-                \$fetchPriority = \$params[3] ?? 'low';
-                echo app('seo-images.picture')->render(\$path, \$alt, \$class, \$fetchPriority);
+                \$imgClass = \$params[1] ?? null;
+                \$imgId = \$params[2] ?? null;
+                \$pictureClass = \$params[3] ?? null;
+                \$pictureId = \$params[4] ?? null;
+                
+                echo app('seo-images.picture')->render(
+                    \$path, 
+                    \$imgClass, 
+                    \$imgId, 
+                    \$pictureClass, 
+                    \$pictureId
+                );
             ?>";
 });
 }

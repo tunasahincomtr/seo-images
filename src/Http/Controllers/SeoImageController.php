@@ -50,6 +50,7 @@ class SeoImageController extends BaseController
         return response()->json([
             'success' => true,
             'data' => $images->map(function ($image) {
+                $fileName = basename($image->folder_path);
                 return [
                     'id' => $image->id,
                     'folder_path' => $image->folder_path,
@@ -57,8 +58,9 @@ class SeoImageController extends BaseController
                     'title' => $image->title,
                     'width' => $image->width,
                     'height' => $image->height,
-                    'url' => asset('storage/' . $image->folder_path . '/' . basename($image->folder_path) . '.jpg'),
-                    'webp_url' => asset('storage/' . $image->folder_path . '/' . basename($image->folder_path) . '.webp'),
+                    'url' => asset('storage/' . $image->folder_path . '/' . $fileName . '.jpg'),
+                    'webp_url' => asset('storage/' . $image->folder_path . '/' . $fileName . '.webp'),
+                    'avif_url' => asset('storage/' . $image->folder_path . '/' . $fileName . '.avif'),
                     'created_at' => $image->created_at->format('Y-m-d H:i:s'),
                 ];
             }),
