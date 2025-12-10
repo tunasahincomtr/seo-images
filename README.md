@@ -350,6 +350,7 @@ Alt etiketi veritabanından otomatik olarak alınır. Tüm formatlar (AVIF, WebP
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('styles')
     @stack('scripts')
+    @stack('modals')
 </body>
 </html>
 ```
