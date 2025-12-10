@@ -9,12 +9,6 @@
             "email": "tunasahin@example.com"
         }
     ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/tunasahincomtr/seo-images"
-        }
-    ],
     "require": {
         "php": "^8.1",
         "illuminate/support": "^10.0",

@@ -63,10 +63,10 @@ class SeoImagesServiceProvider extends ServiceProvider
             // Örnek: ('image_path') veya ('image_path', true)
             $expression = trim($expression, '()');
             
-            // Eğer boşsa varsayılan değer
+            // Eğer boşsa varsayılan değer (tekli seçim için 'image')
             if (empty($expression)) {
                 return "<?php echo view('seo-images::components.image-input', [
-                    'name' => 'image_path',
+                    'name' => 'image',
                     'multiple' => false
                 ])->render(); ?>";
 }
@@ -74,8 +74,8 @@ class SeoImagesServiceProvider extends ServiceProvider
 // Parametreleri parse et
 $params = array_map('trim', explode(',', $expression));
 
-// İlk parametre name (string)
-$nameParam = $params[0] ?? "'image_path'";
+// İlk parametre name (string) - varsayılan: tekli için 'image', çoklu için 'images'
+$nameParam = $params[0] ?? "'image'";
 // Tırnak işaretlerini temizle ve tekrar ekle (güvenli string için)
 $nameParam = trim($nameParam, " '\"");
 $name = "'" . addslashes($nameParam) . "'";

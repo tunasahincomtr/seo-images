@@ -1,8 +1,14 @@
 @php
     $multiple = $multiple ?? false;
-    $inputName = $multiple ? config('seo-images.multiple_name_pattern', 'images[]') : $name;
+    // Input name: tekli seçimde "image", çoklu seçimde "images[]"
+    // Eğer name verilmemişse, tekli için "image", çoklu için "images" kullan
+    if (!isset($name) || empty($name)) {
+        $name = $multiple ? 'images' : 'image';
+    }
+    $inputName = $multiple ? $name . '[]' : $name;
     $wrapperClass = $multiple ? 'seo-image-input-wrapper seo-image-multiple' : 'seo-image-input-wrapper';
-    $namePattern = $multiple ? config('seo-images.multiple_name_pattern', 'images[]') : $name;
+    // Name pattern: çoklu seçimde images[], tekli seçimde image
+    $namePattern = $multiple ? $name . '[]' : $name;
 @endphp
 
 <div class="{{ $wrapperClass }}" data-name="{{ $name }}" data-multiple="{{ $multiple ? 'true' : 'false' }}"
@@ -14,19 +20,17 @@
             <div class="selected-images-sortable"></div>
             <small class="text-muted d-block mt-2">Sıralamak için resimleri sürükleyip bırakın</small>
         </div>
-        <button type="button" class="btn btn-primary seo-image-select-btn" data-bs-toggle="modal"
-            data-bs-target="#seoImageModal">
+        <button type="button" class="btn btn-primary seo-image-select-btn">
             Resim Seç (Çoklu)
         </button>
         <button type="button" class="btn btn-danger seo-image-clear-all-btn" style="display: none;">
             Tümünü Temizle
         </button>
     @else
-        {{-- Tekli seçim için normal input --}}
-        <input type="text" name="{{ $inputName }}" id="{{ $name }}" value="{{ old($name, $value ?? '') }}"
-            class="seo-image-input form-control" readonly placeholder="Resim seçmek için tıklayın">
-        <button type="button" class="btn btn-primary seo-image-select-btn" data-bs-toggle="modal"
-            data-bs-target="#seoImageModal">
+        {{-- Tekli seçim için hidden input --}}
+        <input type="hidden" name="{{ $inputName }}" id="seo-image-input-{{ $name }}" value="{{ old($name, $value ?? '') }}"
+            class="seo-image-input" data-input-name="{{ $name }}">
+        <button type="button" class="btn btn-primary seo-image-select-btn">
             Resim Seç
         </button>
         <button type="button" class="btn btn-danger seo-image-remove-btn" style="display: none;">
@@ -54,12 +58,14 @@
 @php
     }
     
-    // Modal'ı sadece bir kez include et
+    // Modal'ı sadece bir kez include et - FORM DIŞINDA (body sonunda)
     static $modalIncluded = false;
     if (!$modalIncluded) {
         $modalIncluded = true;
 @endphp
+@push('modals')
 @include('seo-images::modal')
+@endpush
 @php
     }
 @endphp

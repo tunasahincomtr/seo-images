@@ -1,14 +1,14 @@
 <!-- SEO Images Modal -->
 <div class="modal fade" id="seoImageModal" tabindex="-1" aria-labelledby="seoImageModalLabel" aria-hidden="true"
-    data-bs-backdrop="true">
-    <div class="modal-dialog modal-fullscreen">
-        <div class="modal-content">
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1050;">
+    <div class="modal-dialog modal-fullscreen" style="margin: 0; max-width: 100%; height: 100%;">
+        <div class="modal-content" style="height: 100%; border: 0; border-radius: 0;">
             <div class="modal-header">
                 <h5 class="modal-title" id="seoImageModalLabel">Resim Kütüphanesi</h5>
                 <div class="ms-auto me-3">
                     <span id="selectedCount" class="badge bg-primary" style="display: none;">0 seçili</span>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0">
                 <div class="row g-0 h-100">
@@ -87,7 +87,7 @@
                             </div>
 
                             <!-- Form -->
-                            <form id="imageDetailsForm">
+                            <div id="imageDetailsForm">
                                 <input type="hidden" id="selectedImageId">
 
                                 <div class="mb-3">
@@ -118,35 +118,18 @@
                                     <button type="button" class="btn btn-danger" id="deleteSelectedImageBtn">Resmi
                                         Sil</button>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
                 <button type="button" class="btn btn-primary" id="selectImageBtn"
                     style="display: none;">Seç</button>
                 <button type="button" class="btn btn-success" id="selectMultipleImagesBtn"
                     style="display: none;">Seçilenleri Ekle (<span id="multipleCount">0</span>)</button>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Silme Onay Popover -->
-<div id="deleteConfirmPopover" class="delete-confirm-popover" style="display: none;">
-    <div class="delete-confirm-content">
-        <div class="delete-confirm-header">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
-            <h6>Resmi Sil</h6>
-        </div>
-        <p>Bu resmi silmek istediğinizden emin misiniz?</p>
-        <div class="delete-confirm-actions">
-            <button type="button" class="btn btn-sm btn-secondary" id="cancelDeleteBtn">İptal</button>
-            <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn">Sil</button>
         </div>
     </div>
 </div>
