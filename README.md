@@ -64,7 +64,7 @@ Eğer paket local development için kullanılıyorsa, `composer.json` dosyanıza
     }
 }
 ```
-
+TunaSahin\SeoImages\SeoImagesServiceProvider::class,
 ### 2. Yayınlama ve Migrasyon
 
 Config dosyasını yayınlayın:
