@@ -19,7 +19,7 @@
         /**
          * Escape HTML to prevent XSS
          */
-        escapeHtml: function(text) {
+        escapeHtml: function (text) {
             if (text == null) return '';
             var map = {
                 '&': '&amp;',
@@ -28,7 +28,9 @@
                 '"': '&quot;',
                 "'": '&#039;'
             };
-            return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+            return String(text).replace(/[&<>"']/g, function (m) {
+                return map[m];
+            });
         },
 
         /**
@@ -223,12 +225,6 @@
                 }
             });
 
-            // Add selected button (single mode)
-            $(document).on('click', '#seo-images-add-selected', function () {
-                if (self.currentMode === 'single' && self.selectedImageId) {
-                    self.applySelection();
-                }
-            });
 
             // Save meta button
             $(document).on('click', '#seo-images-save-meta', function () {
@@ -570,6 +566,7 @@
          * Render image detail panel
          */
         renderImageDetail: function (image) {
+            var self = this;
             var html = '<div class="seo-image-detail">';
 
             // Preview image
@@ -593,25 +590,33 @@
             html += '<small class="text-muted d-block">Dosya: <strong>' + self.escapeHtml(image.basename || '') + '</strong></small>';
             html += '</div>';
 
-            // Formats and variations
+            // Formats and variations - Accordion style
             if (image.formats && image.formats.length > 0) {
                 html += '<div class="mb-3">';
                 html += '<label class="form-label fw-bold mb-2">Formatlar ve Varyasyonlar</label>';
-                html += '<div class="seo-formats-container">';
+                html += '<div class="accordion seo-formats-container" id="seo-formats-accordion-' + image.id + '">';
 
-                image.formats.forEach(function (formatData) {
+                image.formats.forEach(function (formatData, index) {
                     if (!formatData.original.exists && formatData.sizes.length === 0) {
                         return; // Skip if format doesn't exist
                     }
 
-                    html += '<div class="seo-format-group mb-3 p-3 border rounded">';
-                    html += '<div class="d-flex align-items-center mb-2">';
-                    html += '<span class="badge bg-secondary me-2">' + formatData.format.toUpperCase() + '</span>';
+                    var formatId = 'format-' + image.id + '-' + formatData.format;
+                    var collapseId = 'collapse-' + formatId;
+                    var isFirst = index === 0;
+
+                    html += '<div class="accordion-item seo-format-group border rounded mb-2">';
+                    html += '<h2 class="accordion-header" id="heading-' + formatId + '">';
+                    html += '<button class="accordion-button seo-format-header' + (isFirst ? '' : ' collapsed') + '" type="button" data-bs-toggle="collapse" data-bs-target="#' + collapseId + '" aria-expanded="' + (isFirst ? 'true' : 'false') + '" aria-controls="' + collapseId + '">';
+                    html += '<span class="badge bg-secondary me-2">' + self.escapeHtml(formatData.format.toUpperCase()) + '</span>';
                     if (formatData.original.exists) {
                         var sizeKB = formatData.original.size ? (formatData.original.size / 1024).toFixed(1) : '?';
                         html += '<small class="text-muted">Orijinal: ' + sizeKB + ' KB</small>';
                     }
-                    html += '</div>';
+                    html += '</button>';
+                    html += '</h2>';
+                    html += '<div id="' + collapseId + '" class="accordion-collapse collapse' + (isFirst ? ' show' : '') + '" aria-labelledby="heading-' + formatId + '" data-bs-parent="#seo-formats-accordion-' + image.id + '">';
+                    html += '<div class="accordion-body p-2">';
 
                     // Original
                     if (formatData.original.exists) {
@@ -647,30 +652,23 @@
                         });
                     }
 
-                    html += '</div>';
+                    html += '</div>'; // accordion-body
+                    html += '</div>'; // accordion-collapse
+                    html += '</div>'; // accordion-item
                 });
 
-                html += '</div>';
-                html += '</div>';
+                html += '</div>'; // accordion
+                html += '</div>'; // mb-3
             }
 
-            // Action buttons with SVG icons
-            html += '<div class="d-grid gap-2">';
+            // Action buttons with SVG icons - outline style, side by side
+            html += '<div class="d-flex gap-2">';
 
-            // Add button (only in single mode)
-            if (self.currentMode === 'single') {
-                var isSelected = self.selectedImageId === image.id;
-                html += '<button type="button" class="btn btn-success d-flex align-items-center justify-content-center" id="seo-images-add-selected" ' + (isSelected ? '' : 'disabled') + '>';
-                html += '<svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-2"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>';
-                html += 'Ekle';
-                html += '</button>';
-            }
-
-            html += '<button type="button" class="btn btn-primary d-flex align-items-center justify-content-center" id="seo-images-save-meta">';
+            html += '<button type="button" class="btn btn-outline-primary d-flex align-items-center justify-content-center flex-fill" id="seo-images-save-meta">';
             html += '<svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-2"><path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/></svg>';
             html += 'Kaydet';
             html += '</button>';
-            html += '<button type="button" class="btn btn-danger d-flex align-items-center justify-content-center" id="seo-images-delete-btn" data-image-id="' + image.id + '">';
+            html += '<button type="button" class="btn btn-outline-danger d-flex align-items-center justify-content-center flex-fill" id="seo-images-delete-btn" data-image-id="' + image.id + '">';
             html += '<svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-2"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>';
             html += 'Sil';
             html += '</button>';
@@ -678,7 +676,7 @@
             html += '</div>';
 
             $('#seo-images-detail-panel').html(html);
-            this.currentImageDetail = image;
+            self.currentImageDetail = image;
         },
 
         /**
@@ -687,12 +685,6 @@
         selectImage: function (imageId) {
             this.selectedImageId = imageId;
             this.updateSelectionUI();
-
-            // Update add button state in detail panel
-            var $addBtn = $('#seo-images-add-selected');
-            if ($addBtn.length > 0) {
-                $addBtn.prop('disabled', false);
-            }
         },
 
         /**
@@ -722,14 +714,6 @@
             }
 
             $('#seo-images-apply-selection').prop('disabled', !hasSelection);
-
-            // Update add button in detail panel (single mode)
-            if (self.currentMode === 'single') {
-                var $addBtn = $('#seo-images-add-selected');
-                if ($addBtn.length > 0) {
-                    $addBtn.prop('disabled', !hasSelection);
-                }
-            }
         },
 
         /**

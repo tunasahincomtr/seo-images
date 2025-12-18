@@ -173,14 +173,61 @@
     border-radius: 0.25rem;
 }
 
-/* Formats Container */
+/* Formats Container - Accordion style, no scroll */
 .seo-formats-container {
-    max-height: 400px;
-    overflow-y: auto;
+    /* Scroll kaldırıldı - accordion kullanılıyor */
 }
 
 .seo-format-group {
     background-color: #f8f9fa;
+    margin-bottom: 0.5rem;
+}
+
+.seo-format-header {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+    box-shadow: none !important;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+}
+
+.seo-format-header:not(.collapsed) {
+    background-color: #e9ecef;
+    color: inherit;
+}
+
+.seo-format-header:hover {
+    background-color: #e9ecef;
+}
+
+.seo-format-header:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+/* Accordion body padding */
+.seo-formats-container .accordion-body {
+    padding: 0.5rem 1rem;
+    max-height: none;
+}
+
+/* Remove default accordion border on active */
+.seo-formats-container .accordion-item {
+    border: 1px solid #dee2e6;
+    overflow: hidden;
+}
+
+.seo-formats-container .accordion-button::after {
+    margin-left: auto;
+}
+
+.seo-format-item {
+    margin-bottom: 0.5rem;
+}
+
+.seo-format-item:last-child {
+    margin-bottom: 0;
 }
 
 .seo-format-item a {
