@@ -137,19 +137,42 @@ Bu komut `public/storage` klasörünü `storage/app/public` klasörüne bağlar.
     <!-- İçerik -->
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+=======
+<<<<<<< HEAD
+>>>>>>> 36c2b02 (Initial commit)
+>>>>>>> a84f6c75cdf1baf2b669d8700232262dacb50d07
         <form method="POST" action="/save">
             @csrf
 
             <!-- Tekli Resim -->
             <div class="mb-3">
                 <label>Kapak Resmi</label>
+<<<<<<< HEAD
                 @imageInput('cover_image')
+=======
+<<<<<<< HEAD
+                @seoinput('cover_image')
+=======
+                @imageInput('cover_image')
+>>>>>>> 36c2b02 (Initial commit)
+>>>>>>> a84f6c75cdf1baf2b669d8700232262dacb50d07
             </div>
 
             <!-- Çoklu Resim -->
             <div class="mb-3">
                 <label>Galeri Resimleri</label>
+<<<<<<< HEAD
                 @imageInput('gallery', true)
+=======
+<<<<<<< HEAD
+                @seoinput('gallery', true)
+=======
+                @imageInput('gallery', true)
+>>>>>>> 36c2b02 (Initial commit)
+>>>>>>> a84f6c75cdf1baf2b669d8700232262dacb50d07
             </div>
 
             <button type="submit" class="btn btn-primary">Kaydet</button>
@@ -179,10 +202,21 @@ Bu komut `public/storage` klasörünü `storage/app/public` klasörüne bağlar.
     @stack('styles')
     @stack('scripts')
     @stack('modals')
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+    <!-- Modal'ı ekleyin -->
+    @include('seo-images::modal')
+=======
+>>>>>>> a84f6c75cdf1baf2b669d8700232262dacb50d07
 =======
     <!-- Modal'ı ekleyin -->
     @include('seo-images::modal')
 >>>>>>> 1cb6bb5 (Update: image optimization improvements)
+<<<<<<< HEAD
+=======
+>>>>>>> 36c2b02 (Initial commit)
+>>>>>>> a84f6c75cdf1baf2b669d8700232262dacb50d07
 </body>
 </html>
 ```

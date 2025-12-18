@@ -157,9 +157,15 @@ class SeoImagesDirective
      */
     public function renderScripts(): string
     {
-        $html = '<link rel="stylesheet" href="' . asset('vendor/seo-images/seo-images.css') . '">';
+        $primaryColor = config('seo-images.primary_color', '#0d6efd');
+        
+        // Dynamic CSS variables
+        $html = '<style>';
+        $html .= ':root { --seo-images-primary: ' . e($primaryColor) . '; }';
+        $html .= '</style>';
+        
+        $html .= '<link rel="stylesheet" href="' . asset('vendor/seo-images/seo-images.css') . '">';
         $html .= '<script src="' . asset('vendor/seo-images/seo-images.js') . '"></script>';
         return $html;
     }
 }
-

@@ -79,16 +79,35 @@ class ImageConverterService
             $fileSizeJpg = null;
             $fileSizeWebp = null;
             $fileSizeAvif = null;
+            
+            // Track available formats
+            $availableFormats = [
+                'jpg' => [],
+                'webp' => [],
+                'avif' => [],
+            ];
 
             // Original sizes (no width suffix) - process and free memory immediately
-            $this->saveImage($image, $folderPath, $slug, 'jpg', null, $this->qualityJpg);
-            $this->saveImage($image, $folderPath, $slug, 'webp', null, $this->qualityWebp);
-            $this->saveImage($image, $folderPath, $slug, 'avif', null, $this->qualityAvif);
+            if ($this->saveImage($image, $folderPath, $slug, 'jpg', null, $this->qualityJpg)) {
+                $availableFormats['jpg'][] = null;
+            }
+            if ($this->saveImage($image, $folderPath, $slug, 'webp', null, $this->qualityWebp)) {
+                $availableFormats['webp'][] = null;
+            }
+            if ($this->saveImage($image, $folderPath, $slug, 'avif', null, $this->qualityAvif)) {
+                $availableFormats['avif'][] = null;
+            }
 
-            // Get original file sizes
-            $fileSizeJpg = Storage::disk($this->disk)->size("{$folderPath}/{$slug}.jpg");
-            $fileSizeWebp = Storage::disk($this->disk)->size("{$folderPath}/{$slug}.webp");
-            $fileSizeAvif = Storage::disk($this->disk)->size("{$folderPath}/{$slug}.avif");
+            // Get original file sizes (only if exists)
+            if (in_array(null, $availableFormats['jpg'])) {
+                $fileSizeJpg = Storage::disk($this->disk)->size("{$folderPath}/{$slug}.jpg");
+            }
+            if (in_array(null, $availableFormats['webp'])) {
+                $fileSizeWebp = Storage::disk($this->disk)->size("{$folderPath}/{$slug}.webp");
+            }
+            if (in_array(null, $availableFormats['avif'])) {
+                $fileSizeAvif = Storage::disk($this->disk)->size("{$folderPath}/{$slug}.avif");
+            }
 
             // Resized versions - process each size separately to save memory
             foreach ($this->sizes as $width) {
@@ -103,10 +122,16 @@ class ImageConverterService
                     $constraint->upsize();
                 });
                 
-                // Save in all formats
-                $this->saveImage($resized, $folderPath, $slug, 'jpg', $width, $this->qualityJpg);
-                $this->saveImage($resized, $folderPath, $slug, 'webp', $width, $this->qualityWebp);
-                $this->saveImage($resized, $folderPath, $slug, 'avif', $width, $this->qualityAvif);
+                // Save in all formats and track success
+                if ($this->saveImage($resized, $folderPath, $slug, 'jpg', $width, $this->qualityJpg)) {
+                    $availableFormats['jpg'][] = $width;
+                }
+                if ($this->saveImage($resized, $folderPath, $slug, 'webp', $width, $this->qualityWebp)) {
+                    $availableFormats['webp'][] = $width;
+                }
+                if ($this->saveImage($resized, $folderPath, $slug, 'avif', $width, $this->qualityAvif)) {
+                    $availableFormats['avif'][] = $width;
+                }
                 
                 // Free memory for resized image immediately
                 unset($resized);
@@ -129,6 +154,7 @@ class ImageConverterService
                 'file_size_jpg' => $fileSizeJpg,
                 'file_size_webp' => $fileSizeWebp,
                 'file_size_avif' => $fileSizeAvif,
+                'available_formats' => $availableFormats,
             ]);
 
             return $seoImage;
@@ -165,8 +191,9 @@ class ImageConverterService
 
     /**
      * Save image in specific format and size.
+     * Returns true if saved successfully, false otherwise.
      */
-    protected function saveImage($image, string $folderPath, string $slug, string $format, ?int $width, int $quality): void
+    protected function saveImage($image, string $folderPath, string $slug, string $format, ?int $width, int $quality): bool
     {
         $filename = $slug;
         if ($width) {
@@ -193,7 +220,7 @@ class ImageConverterService
                         $encoded = (string) $image->encode('webp', $quality);
                     } catch (Exception $e) {
                         // If AVIF is not supported, skip it
-                        return;
+                        return false;
                     }
                     break;
                 default:
@@ -205,10 +232,14 @@ class ImageConverterService
                 Storage::disk($this->disk)->put($path, $encoded);
                 // Free encoded data memory immediately
                 unset($encoded);
+                return true;
             }
+            
+            return false;
         } catch (Exception $e) {
             // Log error but don't stop processing
             \Log::warning("Failed to save image {$path}: " . $e->getMessage());
+            return false;
         }
     }
 
@@ -250,4 +281,3 @@ class ImageConverterService
         }
     }
 }
-

@@ -3,6 +3,11 @@
  * CSS Styles
  */
 
+/* CSS Variables - Primary color is set dynamically via @seoimagesScripts */
+:root {
+    --seo-images-primary: #0d6efd;
+}
+
 /* Input Wrapper */
 .seo-input-wrapper {
     margin-bottom: 1rem;
@@ -121,8 +126,8 @@
 }
 
 .seo-image-item.selected {
-    border: 2px solid #0d6efd;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    border: 2px solid var(--seo-images-primary);
+    box-shadow: 0 0 0 2px var(--seo-images-primary);
 }
 
 .seo-image-item .card-img-top {
@@ -146,8 +151,8 @@
 }
 
 #seo-images-dropzone.seo-dropzone-active {
-    border-color: #0d6efd;
-    background-color: #e7f1ff;
+    border-color: var(--seo-images-primary);
+    background-color: rgba(var(--seo-images-primary-rgb, 13, 110, 253), 0.1);
 }
 
 #seo-images-dropzone.seo-uploading {
@@ -156,8 +161,8 @@
 }
 
 #seo-images-dropzone:hover {
-    border-color: #0d6efd;
-    background-color: #e7f1ff;
+    border-color: var(--seo-images-primary);
+    background-color: rgba(var(--seo-images-primary-rgb, 13, 110, 253), 0.1);
 }
 
 /* Detail Panel */
@@ -193,7 +198,7 @@
 }
 
 .seo-format-item a:hover .border {
-    border-color: #0d6efd !important;
+    border-color: var(--seo-images-primary) !important;
 }
 
 .seo-format-thumb {
@@ -239,15 +244,63 @@
     padding: 2rem;
 }
 
+/* Modal Input Focus Styles - Clean border without shadow */
+#seo-images-modal .form-control:focus,
+#seo-images-modal .form-select:focus {
+    border-color: var(--seo-images-primary);
+    box-shadow: none;
+    outline: none;
+}
+
+#seo-images-modal .form-control,
+#seo-images-modal .form-select {
+    border-width: 1px;
+    transition: border-color 0.15s ease-in-out;
+}
+
+/* Modal Primary Button Override */
+#seo-images-modal .btn-primary {
+    background-color: var(--seo-images-primary);
+    border-color: var(--seo-images-primary);
+}
+
+#seo-images-modal .btn-primary:hover {
+    background-color: var(--seo-images-primary);
+    border-color: var(--seo-images-primary);
+    filter: brightness(0.9);
+}
+
+#seo-images-modal .btn-primary:focus {
+    background-color: var(--seo-images-primary);
+    border-color: var(--seo-images-primary);
+    box-shadow: none;
+}
+
+/* Checkbox and Radio Focus */
+#seo-images-modal .form-check-input:focus {
+    border-color: var(--seo-images-primary);
+    box-shadow: none;
+}
+
+#seo-images-modal .form-check-input:checked {
+    background-color: var(--seo-images-primary);
+    border-color: var(--seo-images-primary);
+}
+
+/* Nav Tabs */
+#seo-images-modal .nav-link.active {
+    color: var(--seo-images-primary);
+    border-bottom-color: var(--seo-images-primary);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     #seo-images-modal .modal-dialog {
         max-width: 95%;
     }
-    
+
     #seo-images-detail-panel {
         position: static;
         margin-top: 2rem;
     }
 }
-

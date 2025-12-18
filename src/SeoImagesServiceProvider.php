@@ -28,6 +28,13 @@ class SeoImagesServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Console\SyncAvailableFormatsCommand::class,
+            ]);
+        }
+
         // Publish config
         $this->publishes([
             __DIR__ . '/../config/seo-images.php' => config_path('seo-images.php'),
@@ -97,19 +104,19 @@ class SeoImagesServiceProvider extends ServiceProvider
         \Blade::directive('seoinput', function ($expression) {
             if (empty($expression)) {
                 return "<?php echo ''; ?>";
-            }
-            
-            // Remove outer parentheses if present
-            $expression = trim($expression, '()');
-            
-            // Check if we have multiple arguments (comma separated)
-            if (strpos($expression, ',') !== false) {
-                // Split by comma
-                $pos = strpos($expression, ',');
-                $inputNamePart = trim(substr($expression, 0, $pos));
-                $modePart = trim(substr($expression, $pos + 1));
-                
-                return "<?php 
+}
+
+// Remove outer parentheses if present
+$expression = trim($expression, '()');
+
+// Check if we have multiple arguments (comma separated)
+if (strpos($expression, ',') !== false) {
+// Split by comma
+$pos = strpos($expression, ',');
+$inputNamePart = trim(substr($expression, 0, $pos));
+$modePart = trim(substr($expression, $pos + 1));
+
+return "<?php 
                     \$inputName = {$inputNamePart};
                     \$mode = {$modePart};
                     if (is_string(\$inputName)) {
@@ -122,37 +129,37 @@ class SeoImagesServiceProvider extends ServiceProvider
                     }
                     echo app('seo-images.directive')->renderSeoInput(\$inputName, \$mode); 
                 ?>";
-            } else {
-                // Single argument
-                return "<?php 
+} else {
+// Single argument
+return "<?php 
                     \$inputName = {$expression};
                     if (is_string(\$inputName)) {
                         \$inputName = trim(\$inputName, ' \\'\"');
                     }
                     echo app('seo-images.directive')->renderSeoInput(\$inputName, 'single'); 
                 ?>";
-            }
-        });
+}
+});
 
-        // @seoimages directive
-        \Blade::directive('seoimages', function ($expression) {
-            // Laravel Blade passes the expression as a string
-            // Expression format: 'path' or 'path', ['options']
-            if (empty($expression)) {
-                return "<?php echo ''; ?>";
-            }
-            
-            // Remove outer parentheses if present
-            $expression = trim($expression, '()');
-            
-            // Check if we have multiple arguments (comma separated)
-            if (strpos($expression, ',') !== false) {
-                // Split by comma, handling array syntax carefully
-                $pos = strpos($expression, ',');
-                $folderPathPart = substr($expression, 0, $pos);
-                $optionsPart = trim(substr($expression, $pos + 1));
-                
-                return "<?php 
+// @seoimages directive
+\Blade::directive('seoimages', function ($expression) {
+// Laravel Blade passes the expression as a string
+// Expression format: 'path' or 'path', ['options']
+if (empty($expression)) {
+return "<?php echo ''; ?>";
+}
+
+// Remove outer parentheses if present
+$expression = trim($expression, '()');
+
+// Check if we have multiple arguments (comma separated)
+if (strpos($expression, ',') !== false) {
+// Split by comma, handling array syntax carefully
+$pos = strpos($expression, ',');
+$folderPathPart = substr($expression, 0, $pos);
+$optionsPart = trim(substr($expression, $pos + 1));
+
+return "<?php 
                     \$folderPath = {$folderPathPart};
                     \$options = {$optionsPart};
                     if (is_string(\$folderPath)) {
@@ -163,22 +170,21 @@ class SeoImagesServiceProvider extends ServiceProvider
                     }
                     echo app('seo-images.directive')->renderSeoImages(\$folderPath, \$options); 
                 ?>";
-            } else {
-                // Single argument
-                return "<?php 
+} else {
+// Single argument
+return "<?php 
                     \$folderPath = {$expression};
                     if (is_string(\$folderPath)) {
                         \$folderPath = trim(\$folderPath, ' \\'\"');
                     }
                     echo app('seo-images.directive')->renderSeoImages(\$folderPath, []); 
                 ?>";
-            }
-        });
-
-        // @seoimagesScripts directive
-        \Blade::directive('seoimagesScripts', function () {
-            return "<?php echo app('seo-images.directive')->renderScripts(); ?>";
-        });
-    }
 }
+});
 
+// @seoimagesScripts directive
+\Blade::directive('seoimagesScripts', function () {
+return "<?php echo app('seo-images.directive')->renderScripts(); ?>";
+});
+}
+}

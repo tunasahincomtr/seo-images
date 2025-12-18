@@ -25,6 +25,7 @@ class SeoImage extends Model
         'file_size_jpg',
         'file_size_webp',
         'file_size_avif',
+        'available_formats',
     ];
 
     protected $casts = [
@@ -33,6 +34,7 @@ class SeoImage extends Model
         'file_size_jpg' => 'integer',
         'file_size_webp' => 'integer',
         'file_size_avif' => 'integer',
+        'available_formats' => 'array',
     ];
 
     /**
@@ -96,9 +98,22 @@ class SeoImage extends Model
 
     /**
      * Check if a specific format and size exists.
+     * Uses database (available_formats) for performance, falls back to disk check.
      */
     public function exists(string $format = 'jpg', ?int $width = null): bool
     {
+        // If available_formats is set, use it (fast - no disk I/O)
+        if (!empty($this->available_formats)) {
+            $formats = $this->available_formats;
+            
+            if (!isset($formats[$format])) {
+                return false;
+            }
+            
+            return in_array($width, $formats[$format], true);
+        }
+        
+        // Fallback: check disk (for backward compatibility with old records)
         $disk = Storage::disk($this->disk);
         $filename = $this->basename;
         
@@ -112,4 +127,3 @@ class SeoImage extends Model
         return $disk->exists($path);
     }
 }
-
