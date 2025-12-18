@@ -96,10 +96,10 @@ class SeoImagesDirective
                 $avifSrcset[] = $url . ' ' . $size . 'w';
             }
         }
-        // Add original
-        if ($seoImage->exists('avif')) {
+        // Add original with real width
+        if ($seoImage->exists('avif', null)) {
             $url = $seoImage->getUrl('avif');
-            $avifSrcset[] = $url . ' 1920w';
+            $avifSrcset[] = $url . ' ' . $seoImage->width . 'w';
         }
         
         if (!empty($avifSrcset)) {
@@ -114,10 +114,10 @@ class SeoImagesDirective
                 $webpSrcset[] = $url . ' ' . $size . 'w';
             }
         }
-        // Add original
-        if ($seoImage->exists('webp')) {
+        // Add original with real width
+        if ($seoImage->exists('webp', null)) {
             $url = $seoImage->getUrl('webp');
-            $webpSrcset[] = $url . ' 1920w';
+            $webpSrcset[] = $url . ' ' . $seoImage->width . 'w';
         }
         
         if (!empty($webpSrcset)) {
