@@ -17,6 +17,21 @@
         currentImageDetail: null,
 
         /**
+         * Escape HTML to prevent XSS
+         */
+        escapeHtml: function(text) {
+            if (text == null) return '';
+            var map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+        },
+
+        /**
          * Show toast notification (Bootstrap 5)
          */
         showToast: function (message, type) {
@@ -109,8 +124,6 @@
 
                 // Initialize dropzone
                 self.initDropzone();
-
-                console.log('SeoImagesManager initialized');
             });
         },
 
@@ -450,9 +463,9 @@
                         html += '</div>';
                     }
 
-                    html += '<img src="' + image.preview_url + '" class="card-img-top" alt="' + (image.alt || '') + '">';
+                    html += '<img src="' + self.escapeHtml(image.preview_url) + '" class="card-img-top" alt="' + self.escapeHtml(image.alt || '') + '">';
                     html += '<div class="card-body p-2">';
-                    html += '<small class="text-muted">' + (image.basename || '') + '</small>';
+                    html += '<small class="text-muted">' + self.escapeHtml(image.basename || '') + '</small>';
                     html += '</div>';
                     html += '</div>';
                     html += '</div>';
@@ -561,23 +574,23 @@
 
             // Preview image
             html += '<div class="mb-3 text-center">';
-            html += '<img src="' + image.preview_url + '" class="img-fluid rounded shadow-sm" alt="' + (image.alt || '') + '" style="max-height: 300px;">';
+            html += '<img src="' + self.escapeHtml(image.preview_url) + '" class="img-fluid rounded shadow-sm" alt="' + self.escapeHtml(image.alt || '') + '" style="max-height: 300px;">';
             html += '</div>';
 
             // Meta fields
             html += '<div class="mb-3">';
             html += '<label class="form-label fw-bold">Alt Text</label>';
-            html += '<input type="text" class="form-control" id="seo-image-alt" value="' + (image.alt || '') + '" placeholder="Görsel açıklaması">';
+            html += '<input type="text" class="form-control" id="seo-image-alt" value="' + self.escapeHtml(image.alt || '') + '" placeholder="Görsel açıklaması">';
             html += '</div>';
             html += '<div class="mb-3">';
             html += '<label class="form-label fw-bold">Title</label>';
-            html += '<input type="text" class="form-control" id="seo-image-title" value="' + (image.title || '') + '" placeholder="Görsel başlığı">';
+            html += '<input type="text" class="form-control" id="seo-image-title" value="' + self.escapeHtml(image.title || '') + '" placeholder="Görsel başlığı">';
             html += '</div>';
 
             // Image info
             html += '<div class="mb-3 p-2 bg-light rounded">';
-            html += '<small class="text-muted d-block">Boyut: <strong>' + (image.width || 0) + ' x ' + (image.height || 0) + ' px</strong></small>';
-            html += '<small class="text-muted d-block">Dosya: <strong>' + (image.basename || '') + '</strong></small>';
+            html += '<small class="text-muted d-block">Boyut: <strong>' + self.escapeHtml(image.width || 0) + ' x ' + self.escapeHtml(image.height || 0) + ' px</strong></small>';
+            html += '<small class="text-muted d-block">Dosya: <strong>' + self.escapeHtml(image.basename || '') + '</strong></small>';
             html += '</div>';
 
             // Formats and variations
@@ -603,9 +616,9 @@
                     // Original
                     if (formatData.original.exists) {
                         html += '<div class="seo-format-item mb-2">';
-                        html += '<a href="' + formatData.original.url + '" target="_blank" class="text-decoration-none">';
+                        html += '<a href="' + self.escapeHtml(formatData.original.url) + '" target="_blank" class="text-decoration-none">';
                         html += '<div class="d-flex align-items-center p-2 bg-white rounded border">';
-                        html += '<img src="' + formatData.original.url + '" class="seo-format-thumb me-2" alt="Original ' + formatData.format + '">';
+                        html += '<img src="' + self.escapeHtml(formatData.original.url) + '" class="seo-format-thumb me-2" alt="Original ' + self.escapeHtml(formatData.format) + '">';
                         html += '<div class="flex-grow-1">';
                         html += '<div class="fw-semibold">Orijinal</div>';
                         html += '<small class="text-muted">' + (image.width || 0) + ' x ' + (image.height || 0) + ' px</small>';
@@ -620,9 +633,9 @@
                     if (formatData.sizes.length > 0) {
                         formatData.sizes.forEach(function (sizeData) {
                             html += '<div class="seo-format-item mb-2">';
-                            html += '<a href="' + sizeData.url + '" target="_blank" class="text-decoration-none">';
+                            html += '<a href="' + self.escapeHtml(sizeData.url) + '" target="_blank" class="text-decoration-none">';
                             html += '<div class="d-flex align-items-center p-2 bg-white rounded border">';
-                            html += '<img src="' + sizeData.url + '" class="seo-format-thumb me-2" alt="' + sizeData.width + 'px ' + formatData.format + '">';
+                            html += '<img src="' + self.escapeHtml(sizeData.url) + '" class="seo-format-thumb me-2" alt="' + self.escapeHtml(sizeData.width) + 'px ' + self.escapeHtml(formatData.format) + '">';
                             html += '<div class="flex-grow-1">';
                             html += '<div class="fw-semibold">' + sizeData.width + 'px</div>';
                             html += '<small class="text-muted">Genişlik</small>';

@@ -42,6 +42,32 @@ class SeoImage extends Model
      */
     public function getPreviewUrlAttribute(): string
     {
+        // Use available_formats if exists (faster - no disk I/O)
+        if (!empty($this->available_formats)) {
+            $formats = $this->available_formats;
+            
+            // Try 480px WebP first
+            if (isset($formats['webp']) && in_array(480, $formats['webp'], true)) {
+                return $this->getUrl('webp', 480);
+            }
+            
+            // Try 480px JPG
+            if (isset($formats['jpg']) && in_array(480, $formats['jpg'], true)) {
+                return $this->getUrl('jpg', 480);
+            }
+            
+            // Try original WebP
+            if (isset($formats['webp']) && in_array(null, $formats['webp'], true)) {
+                return $this->getUrl('webp');
+            }
+            
+            // Fallback to original JPG
+            if (isset($formats['jpg']) && in_array(null, $formats['jpg'], true)) {
+                return $this->getUrl('jpg');
+            }
+        }
+        
+        // Fallback: check disk (for backward compatibility with old records)
         $disk = Storage::disk($this->disk);
         $path = $this->folder_path . '/' . $this->basename . '-480.webp';
         

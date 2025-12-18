@@ -180,10 +180,16 @@ class ImageConverterService
         switch ($last) {
             case 'g':
                 $value *= 1024;
+                // fall through
             case 'm':
                 $value *= 1024;
+                // fall through
             case 'k':
                 $value *= 1024;
+                break;
+            default:
+                // No unit, assume bytes
+                break;
         }
         
         return $value;
@@ -215,11 +221,13 @@ class ImageConverterService
                     $encoded = (string) $image->encode('webp', $quality);
                     break;
                 case 'avif':
-                    // AVIF might not be supported in v2.7, fallback to webp
+                    // Try to encode as AVIF (may not be supported in Intervention Image v2.7)
                     try {
-                        $encoded = (string) $image->encode('webp', $quality);
+                        // First check if AVIF encoding is available
+                        $encoded = (string) $image->encode('avif', $quality);
                     } catch (Exception $e) {
-                        // If AVIF is not supported, skip it
+                        // AVIF is not supported, don't create fake AVIF file
+                        \Log::info("AVIF encoding not supported for image {$path}, skipping AVIF format");
                         return false;
                     }
                     break;

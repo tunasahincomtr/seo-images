@@ -196,10 +196,16 @@ class SeoImagesController
         switch ($last) {
             case 'g':
                 $value *= 1024;
+                // fall through
             case 'm':
                 $value *= 1024;
+                // fall through
             case 'k':
                 $value *= 1024;
+                break;
+            default:
+                // No unit, assume bytes
+                break;
         }
         
         return $value;
