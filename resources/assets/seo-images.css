@@ -44,12 +44,10 @@
     position: relative;
     display: inline-block;
     margin: 0.25rem;
-    transition: transform 0.2s;
 }
 
 .seo-gallery-item:hover {
-    transform: scale(1.05);
-    z-index: 15;
+    /* Hover efekti kaldırıldı */
 }
 
 .seo-gallery-item picture,
@@ -116,18 +114,15 @@
 
 .seo-image-item {
     cursor: pointer;
-    transition: all 0.2s;
     position: relative;
 }
 
 .seo-image-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Hover efekti kaldırıldı */
 }
 
 .seo-image-item.selected {
-    border: 2px solid var(--seo-images-primary);
-    box-shadow: 0 0 0 2px var(--seo-images-primary);
+    border: 1px solid var(--seo-images-primary);
 }
 
 .seo-image-item .card-img-top {
@@ -190,11 +185,10 @@
 
 .seo-format-item a {
     display: block;
-    transition: all 0.2s;
 }
 
 .seo-format-item a:hover {
-    transform: translateX(4px);
+    /* Hover hareket efekti kaldırıldı */
 }
 
 .seo-format-item a:hover .border {
