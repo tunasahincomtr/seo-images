@@ -136,20 +136,32 @@ Bu komut `public/storage` klasörünü `storage/app/public` klasörüne bağlar.
 <body>
     <!-- İçerik -->
 
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+>>>>>>> 36c2b02 (Initial commit)
         <form method="POST" action="/save">
             @csrf
 
             <!-- Tekli Resim -->
             <div class="mb-3">
                 <label>Kapak Resmi</label>
+<<<<<<< HEAD
                 @seoinput('cover_image')
+=======
+                @imageInput('cover_image')
+>>>>>>> 36c2b02 (Initial commit)
             </div>
 
             <!-- Çoklu Resim -->
             <div class="mb-3">
                 <label>Galeri Resimleri</label>
+<<<<<<< HEAD
                 @seoinput('gallery', true)
+=======
+                @imageInput('gallery', true)
+>>>>>>> 36c2b02 (Initial commit)
             </div>
 
             <button type="submit" class="btn btn-primary">Kaydet</button>
@@ -179,8 +191,15 @@ Bu komut `public/storage` klasörünü `storage/app/public` klasörüne bağlar.
     @stack('styles')
     @stack('scripts')
     @stack('modals')
+<<<<<<< HEAD
     <!-- Modal'ı ekleyin -->
     @include('seo-images::modal')
+=======
+=======
+    <!-- Modal'ı ekleyin -->
+    @include('seo-images::modal')
+>>>>>>> 1cb6bb5 (Update: image optimization improvements)
+>>>>>>> 36c2b02 (Initial commit)
 </body>
 </html>
 ```
