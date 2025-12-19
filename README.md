@@ -118,7 +118,7 @@ Bu komut `public/storage` klasörünü `storage/app/public` klasörüne sembolik
 
 `.env` dosyanıza aşağıdaki ayarları ekleyin:
 
-`````env
+````env
 # Storage Disk (varsayılan: public)
 SEO_IMAGES_DISK=public
 
@@ -138,17 +138,23 @@ SEO_IMAGES_CACHE_ENABLED=true
 SEO_IMAGES_CACHE_TTL=3600
 ```
 
+**Not:** Config ayarlarını yaptıktan sonra cache'i temizlemek için:
+```bash
+php artisan config:clear
+php artisan cache:clear
+```
+
 ---
 
 ## 🚀 Kullanım
 
-### Test Sayfası Örneği
+### Test Sayfası
 
-Paketi test etmek için aşağıdaki örneği kullanabilirsiniz. Bu sayfa tüm özellikleri içerir:
+Paketi test etmek için aşağıdaki tek sayfayı oluşturun. Bu sayfa tüm özellikleri içerir:
 
-**1. Layout Dosyası Oluşturun** (`resources/views/layouts/app.blade.php`):
+**Test Sayfası Oluşturun** (`resources/views/test-seo-images.blade.php`):
 
-````blade
+```blade
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -159,67 +165,107 @@ Paketi test etmek için aşağıdaki örneği kullanabilirsiniz. Bu sayfa tüm �
     <!-- CSRF Token (ÖNEMLİ: AJAX istekleri için gerekli) -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Laravel App')</title>
+    <title>SEO Images Test Sayfası</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
           crossorigin="anonymous">
 
-    <!-- Bootstrap Icons (Opsiyonel) -->
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
     <!-- SEO Images Scripts (HEAD bölümüne ekleyin) -->
     @seoimagesScripts
-
-    <!-- Custom CSS (Opsiyonel) -->
-    @stack('styles')
 </head>
 <body>
-    <!-- Navigation (Opsiyonel) -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">Laravel App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/') }}">Ana Sayfa</a>
-                    </li>
-                </ul>
+    <div class="container py-5">
+        <h1 class="mb-4">SEO Images Paket Test Sayfası</h1>
+
+        <div class="alert alert-info mb-4">
+            <i class="bi bi-info-circle"></i> Bu sayfa paketin tüm özelliklerini test etmek için hazırlanmıştır.
+        </div>
+
+        <!-- Test Formu -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Görsel Seçimi Testi</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="#" id="test-form">
+                    @csrf
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <h5 class="mb-3">Tekli Görsel Seçimi</h5>
+                            <p class="text-muted small">@seoinput directive kullanımı</p>
+                            @seoinput('cover_image')
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <h5 class="mb-3">Galeri (Çoklu Görsel)</h5>
+                            <p class="text-muted small">@seoinput('gallery', 'multiple') directive kullanımı</p>
+                            @seoinput('gallery', 'multiple')
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Seçilen Görselleri Gösterme -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Seçilen Görseller</h5>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Kapak Görseli:</label>
+                            <div id="cover-preview" class="border rounded p-3 bg-light">
+                                <p class="text-muted mb-0">Henüz görsel seçilmedi</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Galeri Görselleri:</label>
+                            <div id="gallery-preview" class="border rounded p-3 bg-light">
+                                <p class="text-muted mb-0">Henüz görsel seçilmedi</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Test Et</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearForm()">Temizle</button>
+                    </div>
+                </form>
+
+                <!-- Form Verileri -->
+                <div class="mt-4">
+                    <h5 class="mb-3">Form Verileri</h5>
+                    <pre id="form-data" class="bg-dark text-light p-3 rounded" style="min-height: 100px; max-height: 300px; overflow-y: auto;">Form gönderildiğinde burada görünecek...</pre>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="py-4">
-        <div class="container">
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <!-- @seoimages Directive Testi -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">@seoimages Directive Testi</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">
+                    Aşağıdaki alana bir görsel yükleyip folder_path'ini girin:
+                </p>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="example-folder-path"
+                           placeholder="Örn: 2025/12/18/resim">
+                    <button class="btn btn-outline-primary" type="button" onclick="loadExampleImage()">
+                        <i class="bi bi-search"></i> Yükle
+                    </button>
                 </div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div id="example-image-container" class="text-center p-4 border rounded bg-light">
+                    <p class="text-muted mb-0">Yukarıdaki alana folder_path girin ve yükle butonuna basın</p>
                 </div>
-            @endif
-
-            @yield('content')
+            </div>
         </div>
-    </main>
-
-    <!-- Footer (Opsiyonel) -->
-    <footer class="bg-light py-4 mt-5">
-        <div class="container text-center text-muted">
-            <p class="mb-0">&copy; {{ date('Y') }} Laravel App. Tüm hakları saklıdır.</p>
-        </div>
-    </footer>
+    </div>
 
     <!-- jQuery (Bootstrap'ten önce yüklenmeli) -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"
@@ -234,30 +280,112 @@ Paketi test etmek için aşağıdaki örneği kullanabilirsiniz. Bu sayfa tüm �
     <!-- SEO Images Modal (Sayfanın sonuna ekleyin) -->
     @include('seo-images::modal')
 
-    <!-- Custom Scripts (Opsiyonel) -->
-    @stack('scripts')
+    <script>
+        // Form submit handler (test için)
+        $('#test-form').on('submit', function(e) {
+            e.preventDefault();
+            var formData = {
+                cover_image: $('input[name="cover_image"]').val(),
+                gallery: $('input[name="gallery"]').val()
+            };
+            $('#form-data').text(JSON.stringify(formData, null, 2));
+
+            if (typeof window.SeoImagesManager !== 'undefined') {
+                window.SeoImagesManager.showToast('Form verileri konsola yazdırıldı!', 'success');
+            }
+        });
+
+        // Form temizleme
+        function clearForm() {
+            $('input[name="cover_image"]').val('');
+            $('input[name="gallery"]').val('[]');
+            $('#cover-preview').html('<p class="text-muted mb-0">Henüz görsel seçilmedi</p>');
+            $('#gallery-preview').html('<p class="text-muted mb-0">Henüz görsel seçilmedi</p>');
+            $('#form-data').text('Form gönderildiğinde burada görünecek...');
+        }
+
+        // Örnek görsel yükleme
+        function loadExampleImage() {
+            var folderPath = $('#example-folder-path').val();
+            if (!folderPath) {
+                alert('Lütfen bir folder_path girin');
+                return;
+            }
+
+            $('#example-image-container').html('<div class="spinner-border" role="status"></div>');
+
+            $.ajax({
+                url: '/seo-images/list',
+                method: 'GET',
+                data: { per_page: 100 },
+                success: function(response) {
+                    var image = response.data.find(function(img) {
+                        return img.folder_path === folderPath;
+                    });
+
+                    if (image) {
+                        $.ajax({
+                            url: '/seo-images/render',
+                            method: 'POST',
+                            data: {
+                                folder_path: folderPath,
+                                options: {
+                                    class: 'img-fluid rounded shadow-sm',
+                                    alt: image.alt || 'Test görseli'
+                                }
+                            },
+                            success: function(renderResponse) {
+                                var html = '<p class="small text-muted mb-2">Folder Path: <code>' + image.folder_path + '</code></p>';
+                                html += '<div class="border rounded p-2 bg-white">' + renderResponse.html + '</div>';
+                                $('#example-image-container').html(html);
+                            },
+                            error: function() {
+                                $('#example-image-container').html('<p class="text-danger">Görsel render edilemedi</p>');
+                            }
+                        });
+                    } else {
+                        $('#example-image-container').html('<p class="text-danger">Görsel bulunamadı. Lütfen geçerli bir folder_path girin.</p>');
+                    }
+                },
+                error: function() {
+                    $('#example-image-container').html('<p class="text-danger">Görsel listesi alınamadı</p>');
+                }
+            });
+        }
+
+        // Input değişikliklerini dinle
+        $(document).on('change', 'input[name="cover_image"]', function() {
+            var folderPath = $(this).val();
+            if (folderPath) {
+                $('#cover-preview').html('<p class="text-success mb-0"><i class="bi bi-check-circle"></i> Seçildi: <code>' + folderPath + '</code></p>');
+            } else {
+                $('#cover-preview').html('<p class="text-muted mb-0">Henüz görsel seçilmedi</p>');
+            }
+        });
+
+        $(document).on('change', 'input[name="gallery"]', function() {
+            var gallery = $(this).val();
+            try {
+                var paths = JSON.parse(gallery || '[]');
+                if (paths.length > 0) {
+                    var html = '<p class="text-success mb-2"><i class="bi bi-check-circle"></i> ' + paths.length + ' görsel seçildi:</p>';
+                    html += '<ul class="list-unstyled mb-0">';
+                    paths.forEach(function(path) {
+                        html += '<li><code>' + path + '</code></li>';
+                    });
+                    html += '</ul>';
+                    $('#gallery-preview').html(html);
+                } else {
+                    $('#gallery-preview').html('<p class="text-muted mb-0">Henüz görsel seçilmedi</p>');
+                }
+            } catch (e) {
+                $('#gallery-preview').html('<p class="text-muted mb-0">Henüz görsel seçilmedi</p>');
+            }
+        });
+    </script>
 </body>
 </html>
-`````
-
-**Önemli Notlar:**
-
-- `@seoimagesScripts` directive'i `<head>` bölümüne eklenmelidir
-- CSRF token meta tag'i mutlaka eklenmelidir (AJAX istekleri için)
-- jQuery Bootstrap'ten önce yüklenmelidir
-- Modal'ı sayfanın sonuna (`</body>` öncesine) ekleyin
-- Bootstrap 5 JS bundle'ı sayfanın sonuna eklenmelidir
-
-**2. Test Sayfası Oluşturun** (`resources/views/test-seo-images.blade.php`):
-
-Bu sayfa tüm özellikleri içerir: görsel seçimi, yükleme, görüntüleme ve form işlemleri.
-
-```blade
-@extends('layouts.app')
-
-@section('title', 'SEO Images Test Sayfası')
-
-@section('content')
+```
 <div class="container py-4">
     <div class="row">
         <div class="col-12">
@@ -301,7 +429,7 @@ Bu sayfa tüm özellikleri içerir: görsel seçimi, yükleme, görüntüleme ve
                             <h5 class="mb-3">
                                 <i class="bi bi-eye"></i> Seçilen Görselleri Önizle
                             </h5>
-                            
+
                             <!-- Kapak Görseli Önizleme -->
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Kapak Görseli:</label>
@@ -354,7 +482,7 @@ Bu sayfa tüm özellikleri içerir: görsel seçimi, yükleme, görüntüleme ve
                         Aşağıdaki alana bir görsel yükleyip folder_path'ini girin, görseli görmek için:
                     </p>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="example-folder-path" 
+                        <input type="text" class="form-control" id="example-folder-path"
                                placeholder="Örn: 2025/12/18/resim">
                         <button class="btn btn-outline-primary" type="button" onclick="loadExampleImage()">
                             <i class="bi bi-search"></i> Yükle
@@ -379,7 +507,7 @@ Bu sayfa tüm özellikleri içerir: görsel seçimi, yükleme, görüntüleme ve
             gallery: $('input[name="gallery"]').val()
         };
         $('#form-data').text(JSON.stringify(formData, null, 2));
-        
+
         // Toast notification göster
         if (typeof window.SeoImagesManager !== 'undefined') {
             window.SeoImagesManager.showToast('Form verileri konsola yazdırıldı!', 'success');
@@ -414,7 +542,7 @@ Bu sayfa tüm özellikleri içerir: görsel seçimi, yükleme, görüntüleme ve
                 var image = response.data.find(function(img) {
                     return img.folder_path === folderPath;
                 });
-                
+
                 if (image) {
                     // @seoimages directive kullanarak görseli göster
                     var html = '<div class="mb-2">';
@@ -497,11 +625,13 @@ Route::get('/test-seo-images', function () {
 **4. Test Sayfasına Erişin:**
 
 Tarayıcınızda şu URL'yi açın:
+
 ```
 http://yourdomain.com/test-seo-images
 ```
 
 Bu sayfada şunları test edebilirsiniz:
+
 - ✅ Tekli görsel seçimi
 - ✅ Çoklu görsel seçimi (galeri)
 - ✅ Görsel yükleme
@@ -697,3 +827,4 @@ Dashboard istatistiklerini döndürür (cache'li).
 - Dosya boyutu limiti vardır
 - CSRF koruması aktif
 - XSS koruması (tüm output escape edilir)
+````
