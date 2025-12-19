@@ -614,11 +614,10 @@
 
                     var formatId = 'format-' + image.id + '-' + formatData.format;
                     var collapseId = 'collapse-' + formatId;
-                    var isFirst = index === 0;
 
                     html += '<div class="accordion-item seo-format-group border rounded mb-2">';
                     html += '<h2 class="accordion-header" id="heading-' + formatId + '">';
-                    html += '<button class="accordion-button seo-format-header' + (isFirst ? '' : ' collapsed') + '" type="button" data-bs-toggle="collapse" data-bs-target="#' + collapseId + '" aria-expanded="' + (isFirst ? 'true' : 'false') + '" aria-controls="' + collapseId + '">';
+                    html += '<button class="accordion-button seo-format-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#' + collapseId + '" aria-expanded="false" aria-controls="' + collapseId + '">';
                     html += '<span class="badge bg-secondary me-2">' + self.escapeHtml(formatData.format.toUpperCase()) + '</span>';
                     if (formatData.original.exists) {
                         var sizeKB = formatData.original.size ? (formatData.original.size / 1024).toFixed(1) : '?';
@@ -626,7 +625,7 @@
                     }
                     html += '</button>';
                     html += '</h2>';
-                    html += '<div id="' + collapseId + '" class="accordion-collapse collapse' + (isFirst ? ' show' : '') + '" aria-labelledby="heading-' + formatId + '" data-bs-parent="#seo-formats-accordion-' + image.id + '">';
+                    html += '<div id="' + collapseId + '" class="accordion-collapse collapse" aria-labelledby="heading-' + formatId + '" data-bs-parent="#seo-formats-accordion-' + image.id + '">';
                     html += '<div class="accordion-body p-2">';
 
                     // Original
