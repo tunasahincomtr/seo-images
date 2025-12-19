@@ -91,4 +91,38 @@ return [
         'image/heic',
         'image/heif',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cache Settings
+    |--------------------------------------------------------------------------
+    |
+    | Dashboard ve istatistikler için cache ayarları.
+    |
+    */
+    'cache' => [
+        'enabled' => env('SEO_IMAGES_CACHE_ENABLED', true),
+        'ttl' => env('SEO_IMAGES_CACHE_TTL', 3600), // 1 saat (saniye cinsinden)
+        'prefix' => 'seo_images_',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sitemap Settings
+    |--------------------------------------------------------------------------
+    |
+    | Image sitemap için ayarlar.
+    |
+    */
+    'sitemap' => [
+        // Page URL pattern (optional)
+        // Placeholders: {folder_path}, {basename}, {id}
+        // Example: 'images/{folder_path}' or 'gallery/{id}'
+        // If null, image URL will be used as page URL
+        'page_url_pattern' => env('SEO_IMAGES_SITEMAP_PAGE_URL_PATTERN', null),
+        
+        // Image license URL (optional)
+        // Example: 'https://creativecommons.org/licenses/by/4.0/'
+        'license' => env('SEO_IMAGES_SITEMAP_LICENSE', null),
+    ],
 ];

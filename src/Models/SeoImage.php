@@ -5,6 +5,7 @@ namespace TunaSahin\SeoImages\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class SeoImage extends Model
 {
@@ -151,5 +152,20 @@ class SeoImage extends Model
         $path = $this->folder_path . '/' . $filename;
         
         return $disk->exists($path);
+    }
+
+    /**
+     * Clear cache for dashboard statistics and sitemap.
+     */
+    public static function clearCache(): void
+    {
+        if (config('seo-images.cache.enabled', true)) {
+            $prefix = config('seo-images.cache.prefix', 'seo_images_');
+            Cache::forget($prefix . 'dashboard_stats');
+            Cache::forget($prefix . 'total_count');
+            Cache::forget($prefix . 'format_distribution');
+            Cache::forget($prefix . 'storage_usage');
+            Cache::forget($prefix . 'sitemap'); // Clear sitemap cache
+        }
     }
 }

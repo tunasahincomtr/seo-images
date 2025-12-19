@@ -268,6 +268,9 @@
                 if (tab === 'upload') {
                     // Reset file input when switching to upload tab
                     $('#seo-images-file-input').val('');
+                } else if (tab === 'dashboard') {
+                    // Load dashboard when switching to dashboard tab
+                    self.loadDashboard();
                 }
             });
 
@@ -1136,6 +1139,297 @@
             });
         },
 
+
+        /**
+         * Load and render dashboard
+         */
+        loadDashboard: function () {
+            var self = this;
+
+            // Show loading state
+            $('#seo-images-dashboard-content').html(
+                '<div class="text-center p-4">' +
+                '<div class="spinner-border" role="status"></div>' +
+                '<p class="mt-2 text-muted">Yükleniyor...</p>' +
+                '</div>'
+            );
+
+            $.ajax({
+                url: '/seo-images/dashboard',
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    if (response.error) {
+                        $('#seo-images-dashboard-content').html(
+                            '<div class="alert alert-danger">' + self.escapeHtml(response.message) + '</div>'
+                        );
+                        return;
+                    }
+                    self.renderDashboard(response);
+                },
+                error: function (xhr) {
+                    console.error('Error loading dashboard:', xhr);
+                    $('#seo-images-dashboard-content').html(
+                        '<div class="alert alert-danger">Dashboard yüklenirken bir hata oluştu.</div>'
+                    );
+                }
+            });
+        },
+
+        /**
+         * Render dashboard content
+         */
+        renderDashboard: function (stats) {
+            var self = this;
+
+            if (!stats || stats.error) {
+                $('#seo-images-dashboard-content').html(
+                    '<div class="alert alert-danger">' +
+                    (stats && stats.message ? self.escapeHtml(stats.message) : 'Dashboard verileri yüklenemedi.') +
+                    '</div>'
+                );
+                return;
+            }
+
+            var html = '<div class="row g-3">';
+
+            // Total Images Card
+            html += '<div class="col-md-3">';
+            html += '<div class="card h-100">';
+            html += '<div class="card-body text-center">';
+            html += '<h5 class="card-title text-muted mb-2">Toplam Görsel</h5>';
+            html += '<h2 class="mb-0">' + (stats.total_images || 0) + '</h2>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+
+            // Total Storage Card
+            html += '<div class="col-md-3">';
+            html += '<div class="card h-100">';
+            html += '<div class="card-body text-center">';
+            html += '<h5 class="card-title text-muted mb-2">Toplam Depolama</h5>';
+            var storageGb = stats.total_storage_gb || 0;
+            var storageMb = stats.total_storage_mb || 0;
+            if (storageGb >= 1) {
+                html += '<h2 class="mb-0">' + storageGb.toFixed(2) + ' <small class="text-muted">GB</small></h2>';
+            } else {
+                html += '<h2 class="mb-0">' + storageMb.toFixed(2) + ' <small class="text-muted">MB</small></h2>';
+            }
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+
+            // Format Distribution Card
+            html += '<div class="col-md-6">';
+            html += '<div class="card h-100">';
+            html += '<div class="card-body">';
+            html += '<h5 class="card-title mb-3">Format Dağılımı</h5>';
+
+            var formats = stats.format_distribution || {
+                jpg: {
+                    count: 0,
+                    percentage: 0
+                },
+                webp: {
+                    count: 0,
+                    percentage: 0
+                },
+                avif: {
+                    count: 0,
+                    percentage: 0
+                }
+            };
+
+            // Calculate percentages first
+            var jpgPct = formats.jpg && formats.jpg.percentage !== undefined ? formats.jpg.percentage : 0;
+            var webpPct = formats.webp && formats.webp.percentage !== undefined ? formats.webp.percentage : 0;
+            var avifPct = formats.avif && formats.avif.percentage !== undefined ? formats.avif.percentage : 0;
+
+            // Ensure percentages are numbers
+            jpgPct = isNaN(jpgPct) ? 0 : parseFloat(jpgPct);
+            webpPct = isNaN(webpPct) ? 0 : parseFloat(webpPct);
+            avifPct = isNaN(avifPct) ? 0 : parseFloat(avifPct);
+
+            html += '<div class="mb-2">';
+            html += '<div class="d-flex justify-content-between align-items-center mb-1">';
+            html += '<span><strong>JPG:</strong> ' + (formats.jpg && formats.jpg.count ? formats.jpg.count : 0) + ' görsel</span>';
+            html += '<span class="badge bg-secondary">' + jpgPct.toFixed(1) + '%</span>';
+            html += '</div>';
+
+            html += '<div class="progress mb-2" style="height: 8px;">';
+            html += '<div class="progress-bar bg-primary" role="progressbar" style="width: ' + jpgPct + '%"></div>';
+            html += '</div>';
+            html += '</div>';
+
+            html += '<div class="mb-2">';
+            html += '<div class="d-flex justify-content-between align-items-center mb-1">';
+            html += '<span><strong>WebP:</strong> ' + (formats.webp && formats.webp.count ? formats.webp.count : 0) + ' görsel</span>';
+            html += '<span class="badge bg-info">' + webpPct.toFixed(1) + '%</span>';
+            html += '</div>';
+            html += '<div class="progress mb-2" style="height: 8px;">';
+            html += '<div class="progress-bar bg-info" role="progressbar" style="width: ' + webpPct + '%"></div>';
+            html += '</div>';
+            html += '</div>';
+
+            html += '<div class="mb-2">';
+            html += '<div class="d-flex justify-content-between align-items-center mb-1">';
+            html += '<span><strong>AVIF:</strong> ' + (formats.avif && formats.avif.count ? formats.avif.count : 0) + ' görsel</span>';
+            html += '<span class="badge bg-success">' + avifPct.toFixed(1) + '%</span>';
+            html += '</div>';
+            html += '<div class="progress mb-2" style="height: 8px;">';
+            html += '<div class="progress-bar bg-success" role="progressbar" style="width: ' + avifPct + '%"></div>';
+            html += '</div>';
+            html += '</div>';
+
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+
+            // Recent Uploads Card
+            html += '<div class="col-md-6">';
+            html += '<div class="card h-100">';
+            html += '<div class="card-body">';
+            html += '<h5 class="card-title mb-3">Son 7 Gün Yüklemeler</h5>';
+            html += '<div class="list-group list-group-flush">';
+
+            var recentUploads = stats.recent_uploads || [];
+            var maxCount = recentUploads.length > 0 ?
+                Math.max.apply(null, recentUploads.map(function (u) {
+                    return u.count || 0;
+                })) :
+                0;
+
+            if (recentUploads.length === 0) {
+                html += '<div class="text-center text-muted py-3">Veri bulunamadı.</div>';
+            } else {
+                recentUploads.forEach(function (upload) {
+                    if (!upload || !upload.date) return;
+
+                    var date = new Date(upload.date);
+                    if (isNaN(date.getTime())) return;
+
+                    var dayName = date.toLocaleDateString('tr-TR', {
+                        weekday: 'short'
+                    });
+                    var dateStr = date.toLocaleDateString('tr-TR', {
+                        day: 'numeric',
+                        month: 'short'
+                    });
+                    var count = upload.count || 0;
+                    var percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
+                    if (isNaN(percentage)) percentage = 0;
+
+                    html += '<div class="list-group-item px-0 py-2">';
+                    html += '<div class="d-flex justify-content-between align-items-center mb-1">';
+                    html += '<span><strong>' + self.escapeHtml(dayName) + '</strong> ' + self.escapeHtml(dateStr) + '</span>';
+                    html += '<span class="badge bg-primary">' + count + '</span>';
+                    html += '</div>';
+                    html += '<div class="progress" style="height: 6px;">';
+                    html += '<div class="progress-bar bg-primary" role="progressbar" style="width: ' + percentage.toFixed(1) + '%"></div>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+            }
+
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+
+            // Largest Images Card
+            html += '<div class="col-md-6">';
+            html += '<div class="card h-100">';
+            html += '<div class="card-body">';
+            html += '<h5 class="card-title mb-3">En Büyük Görseller (Top 5)</h5>';
+            html += '<div class="list-group list-group-flush">';
+
+            var largestImages = stats.largest_images || [];
+            if (largestImages.length > 0) {
+                largestImages.forEach(function (image) {
+                    if (!image) return;
+
+                    var previewUrl = image.preview_url || '';
+                    var basename = image.basename || 'Bilinmeyen';
+                    var width = image.width || 0;
+                    var height = image.height || 0;
+                    var sizeMb = image.total_size_mb || 0;
+
+                    html += '<div class="list-group-item px-0 py-2">';
+                    html += '<div class="d-flex align-items-center">';
+                    if (previewUrl) {
+                        html += '<img src="' + self.escapeHtml(previewUrl) + '" class="rounded me-2" style="width: 50px; height: 50px; object-fit: cover;" alt="' + self.escapeHtml(basename) + '">';
+                    } else {
+                        html += '<div class="rounded me-2 bg-light d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><small class="text-muted">N/A</small></div>';
+                    }
+                    html += '<div class="flex-grow-1">';
+                    html += '<div class="fw-semibold">' + self.escapeHtml(basename) + '</div>';
+                    html += '<small class="text-muted">' + width + ' x ' + height + ' px</small>';
+                    html += '</div>';
+                    html += '<div class="text-end">';
+                    html += '<div class="fw-bold">' + sizeMb.toFixed(2) + ' MB</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+            } else {
+                html += '<div class="text-center text-muted py-3">Görsel bulunamadı.</div>';
+            }
+
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+
+            // Format Sizes Card
+            html += '<div class="col-12">';
+            html += '<div class="card">';
+            html += '<div class="card-body">';
+            html += '<h5 class="card-title mb-3">Format Bazında Depolama</h5>';
+            html += '<div class="row g-3">';
+
+            var formatSizes = stats.format_sizes || {
+                jpg: {
+                    total_mb: 0,
+                    total_gb: 0
+                },
+                webp: {
+                    total_mb: 0,
+                    total_gb: 0
+                },
+                avif: {
+                    total_mb: 0,
+                    total_gb: 0
+                }
+            };
+
+            ['jpg', 'webp', 'avif'].forEach(function (format) {
+                var formatData = formatSizes[format] || {
+                    total_mb: 0,
+                    total_gb: 0
+                };
+                var displaySize = (formatData.total_gb || 0) >= 1 ?
+                    (formatData.total_gb || 0).toFixed(2) + ' GB' :
+                    (formatData.total_mb || 0).toFixed(2) + ' MB';
+
+                html += '<div class="col-md-4">';
+                html += '<div class="p-3 border rounded text-center">';
+                html += '<h6 class="text-uppercase text-muted mb-2">' + format.toUpperCase() + '</h6>';
+                html += '<h4 class="mb-0">' + displaySize + '</h4>';
+                html += '</div>';
+                html += '</div>';
+            });
+
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+
+            html += '</div>'; // row end
+
+            $('#seo-images-dashboard-content').html(html);
+        },
 
         /**
          * Reset state

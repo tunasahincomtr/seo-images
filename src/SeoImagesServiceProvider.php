@@ -70,11 +70,16 @@ class SeoImagesServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
+
+        // Protected routes (require auth)
         Route::middleware(config('seo-images.route_middleware', ['web', 'auth']))
             ->prefix('seo-images')
             ->group(function () {
                 Route::get('/list', [Controllers\SeoImagesController::class, 'list'])
                     ->name('seo-images.list');
+                
+                Route::get('/dashboard', [Controllers\SeoImagesController::class, 'dashboard'])
+                    ->name('seo-images.dashboard');
                 
                 Route::post('/upload', [Controllers\SeoImagesController::class, 'upload'])
                     ->name('seo-images.upload');

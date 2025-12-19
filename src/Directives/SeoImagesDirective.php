@@ -82,15 +82,41 @@ class SeoImagesDirective
         $width = $options['width'] ?? $seoImage->width;
         $height = $options['height'] ?? $seoImage->height;
         
+        // SEO Performance Attributes
+        $decoding = $options['decoding'] ?? 'async'; // Default: async for better performance
+        $fetchpriority = $options['fetchpriority'] ?? null; // Optional: high/low/auto
+        $sizes = $options['sizes'] ?? null; // Optional: responsive sizes attribute
+        
+        // Validate decoding attribute
+        $validDecoding = ['async', 'sync', 'auto'];
+        if (!in_array(strtolower($decoding), $validDecoding)) {
+            $decoding = 'async'; // Fallback to safe default
+        }
+        
+        // Validate fetchpriority attribute
+        if ($fetchpriority !== null) {
+            $validFetchpriority = ['high', 'low', 'auto'];
+            if (!in_array(strtolower($fetchpriority), $validFetchpriority)) {
+                $fetchpriority = null; // Invalid value, ignore it
+            } else {
+                $fetchpriority = strtolower($fetchpriority);
+            }
+        }
+        
         $disk = Storage::disk($seoImage->disk);
-        $sizes = config('seo-images.sizes', [480, 768, 1200, 1920]);
+        $imageSizes = config('seo-images.sizes', [480, 768, 1200, 1920]);
+        
+        // Generate smart default sizes attribute if not provided and srcset is used
+        if ($sizes === null && !empty($imageSizes)) {
+            $sizes = $this->generateSmartSizes($imageSizes, $width);
+        }
         
         // Build picture element
         $html = '<picture>';
         
         // AVIF sources
         $avifSrcset = [];
-        foreach ($sizes as $size) {
+        foreach ($imageSizes as $size) {
             if ($seoImage->exists('avif', $size)) {
                 $url = $seoImage->getUrl('avif', $size);
                 $avifSrcset[] = $url . ' ' . $size . 'w';
@@ -108,7 +134,7 @@ class SeoImagesDirective
         
         // WebP sources
         $webpSrcset = [];
-        foreach ($sizes as $size) {
+        foreach ($imageSizes as $size) {
             if ($seoImage->exists('webp', $size)) {
                 $url = $seoImage->getUrl('webp', $size);
                 $webpSrcset[] = $url . ' ' . $size . 'w';
@@ -145,11 +171,72 @@ class SeoImagesDirective
         if ($loading) {
             $html .= ' loading="' . e($loading) . '"';
         }
+        // SEO Performance: decoding attribute (always add for better performance)
+        $html .= ' decoding="' . e($decoding) . '"';
+        
+        // SEO Performance: fetchpriority attribute (only if specified)
+        if ($fetchpriority !== null) {
+            $html .= ' fetchpriority="' . e($fetchpriority) . '"';
+        }
+        
+        // SEO Performance: sizes attribute (for responsive images with srcset)
+        if ($sizes !== null && (!empty($avifSrcset) || !empty($webpSrcset))) {
+            $html .= ' sizes="' . e($sizes) . '"';
+        }
+        
         $html .= '>';
         
         $html .= '</picture>';
         
         return $html;
+    }
+
+    /**
+     * Generate smart default sizes attribute for responsive images.
+     * 
+     * Generates a responsive sizes attribute based on common breakpoints.
+     * Example output: "(max-width: 480px) 100vw, (max-width: 768px) 100vw, (max-width: 1200px) 50vw, 1200px"
+     * 
+     * @param array $imageSizes Available image sizes
+     * @param int|null $originalWidth Original image width
+     * @return string Smart sizes attribute value
+     */
+    protected function generateSmartSizes(array $imageSizes, ?int $originalWidth = null): string
+    {
+        // Sort sizes ascending
+        $sortedSizes = array_unique($imageSizes);
+        sort($sortedSizes);
+        
+        if (empty($sortedSizes)) {
+            // Fallback: use original width or default
+            return ($originalWidth ?? 1920) . 'px';
+        }
+        
+        // Common responsive breakpoints
+        // Format: (max-width: breakpoint) viewport-width-or-fixed-size
+        $sizesParts = [];
+        
+        // Mobile first approach
+        // Small screens (up to 480px): full width
+        if (isset($sortedSizes[0]) && $sortedSizes[0] <= 480) {
+            $sizesParts[] = '(max-width: 480px) 100vw';
+        }
+        
+        // Tablet (up to 768px): full width or first available size
+        if (isset($sortedSizes[0]) && $sortedSizes[0] <= 768) {
+            $sizesParts[] = '(max-width: 768px) 100vw';
+        }
+        
+        // Desktop (up to 1200px): 50vw or appropriate size
+        if (isset($sortedSizes[1]) && $sortedSizes[1] <= 1200) {
+            $sizesParts[] = '(max-width: 1200px) 50vw';
+        }
+        
+        // Large desktop: use largest available size or original width
+        $finalSize = $originalWidth ?? end($sortedSizes);
+        $sizesParts[] = $finalSize . 'px';
+        
+        return implode(', ', $sizesParts);
     }
 
     /**
