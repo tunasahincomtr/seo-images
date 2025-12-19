@@ -136,12 +136,17 @@ SEO_IMAGES_PRIMARY_COLOR=#0d6efd
 # Cache Ayarları
 SEO_IMAGES_CACHE_ENABLED=true
 SEO_IMAGES_CACHE_TTL=3600
+```
+
+---
 
 ## 🚀 Kullanım
 
-### Adım 1: Layout Dosyanıza Script'leri Ekleyin
+### Test Sayfası Örneği
 
-Ana layout dosyanızın (`resources/views/layouts/app.blade.php` gibi) tam bir örneği:
+Paketi test etmek için aşağıdaki örneği kullanabilirsiniz. Bu sayfa tüm özellikleri içerir:
+
+**1. Layout Dosyası Oluşturun** (`resources/views/layouts/app.blade.php`):
 
 ````blade
 <!DOCTYPE html>
@@ -243,199 +248,266 @@ Ana layout dosyanızın (`resources/views/layouts/app.blade.php` gibi) tam bir �
 - Modal'ı sayfanın sonuna (`</body>` öncesine) ekleyin
 - Bootstrap 5 JS bundle'ı sayfanın sonuna eklenmelidir
 
-### Adım 2: Form'unuzda Görsel Seçimi Ekleyin
+**2. Test Sayfası Oluşturun** (`resources/views/test-seo-images.blade.php`):
 
-Tam bir form örneği:
-
-```blade
-@extends('layouts.app')
-
-@section('title', 'Yeni Yazı Oluştur')
-
-@section('content')
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">
-                    <i class="bi bi-file-earmark-image"></i> Yeni Yazı Oluştur
-                </h4>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
-                    @csrf
-
-                    <!-- Başlık -->
-                    <div class="mb-4">
-                        <label for="title" class="form-label fw-bold">
-                            Başlık <span class="text-danger">*</span>
-                        </label>
-                        <input type="text"
-                               class="form-control @error('title') is-invalid @enderror"
-                               id="title"
-                               name="title"
-                               value="{{ old('title') }}"
-                               required>
-                        @error('title')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Kapak Görseli -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">
-                            <i class="bi bi-image"></i> Kapak Görseli
-                        </label>
-                        <p class="text-muted small mb-2">Yazınız için bir kapak görseli seçin</p>
-                        @seoinput('cover_image')
-                        @error('cover_image')
-                            <div class="text-danger small mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Galeri Görselleri -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">
-                            <i class="bi bi-images"></i> Galeri Görselleri
-                        </label>
-                        <p class="text-muted small mb-2">Yazınız için birden fazla görsel ekleyebilirsiniz</p>
-                        @seoinput('gallery', 'multiple')
-                        @error('gallery')
-                            <div class="text-danger small mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- İçerik -->
-                    <div class="mb-4">
-                        <label for="content" class="form-label fw-bold">
-                            İçerik <span class="text-danger">*</span>
-                        </label>
-                        <textarea class="form-control @error('content') is-invalid @enderror"
-                                  id="content"
-                                  name="content"
-                                  rows="10"
-                                  required>{{ old('content') }}</textarea>
-                        @error('content')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Form Butonları -->
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a href="{{ route('posts.index') }}" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left"></i> İptal
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-circle"></i> Kaydet
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
-```
-
-### Adım 3: Controller'da Görselleri Kaydedin
-
-```php
-<?php
-
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-
-class PostController extends Controller
-{
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'cover_image' => 'nullable|string',
-            'gallery' => 'nullable|string', // JSON string olarak gelir
-        ]);
-
-        $post = Post::create([
-            'title' => $validated['title'],
-            'cover_image' => $validated['cover_image'], // "2025/12/10/x" formatında
-            'gallery' => $validated['gallery'], // JSON string: '["2025/12/10/x","2025/12/11/y"]'
-        ]);
-
-        return redirect()->route('posts.show', $post);
-    }
-}
-```
-
-### Adım 4: Görselleri Sayfada Gösterin
-
-Detay sayfasında görselleri gösterme örneği:
+Bu sayfa tüm özellikleri içerir: görsel seçimi, yükleme, görüntüleme ve form işlemleri.
 
 ```blade
 @extends('layouts.app')
 
-@section('title', $post->title)
+@section('title', 'SEO Images Test Sayfası')
 
 @section('content')
-<article class="mb-5">
-    <!-- Başlık -->
-    <header class="mb-4">
-        <h1 class="display-4 fw-bold">{{ $post->title }}</h1>
-        <p class="text-muted">
-            <i class="bi bi-calendar"></i> {{ $post->created_at->format('d F Y') }}
-        </p>
-    </header>
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-images"></i> SEO Images Paket Test Sayfası
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Bu sayfa paketin tüm özelliklerini test etmek için hazırlanmıştır.
+                    </div>
 
-    <!-- Kapak Görseli -->
-    @if($post->cover_image)
-        <div class="mb-4">
-            @seoimages($post->cover_image, [
-                'class' => 'img-fluid rounded shadow-lg',
-                'alt' => $post->title,
-                'loading' => 'eager',
-                'fetchpriority' => 'high',
-            ])
-        </div>
-    @endif
+                    <!-- Test Formu -->
+                    <form method="POST" action="#" id="test-form">
+                        @csrf
 
-    <!-- İçerik -->
-    <div class="content mb-5">
-        {!! nl2br(e($post->content)) !!}
-    </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-image"></i> Tekli Görsel Seçimi
+                                </h5>
+                                <p class="text-muted small">Kapak görseli seçmek için kullanın</p>
+                                @seoinput('cover_image')
+                            </div>
 
-    <!-- Galeri Görselleri -->
-    @if($post->gallery)
-        <section class="mt-5">
-            <h2 class="h4 mb-4">
-                <i class="bi bi-images"></i> Galeri
-            </h2>
-            <div class="row g-3">
-                @foreach(json_decode($post->gallery, true) as $imagePath)
-                    <div class="col-md-4 col-sm-6">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body p-2">
-                                @seoimages($imagePath, [
-                                    'class' => 'img-fluid rounded',
-                                    'loading' => 'lazy',
-                                ])
+                            <div class="col-md-6 mb-4">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-images"></i> Galeri (Çoklu Görsel)
+                                </h5>
+                                <p class="text-muted small">Birden fazla görsel seçmek için kullanın</p>
+                                @seoinput('gallery', 'multiple')
                             </div>
                         </div>
-                    </div>
-                @endforeach
-            </div>
-        </section>
-    @endif
-</article>
 
-<!-- İlgili Yazılar (Opsiyonel) -->
-<div class="mt-5 pt-4 border-top">
-    <h3 class="h5 mb-3">İlgili Yazılar</h3>
-    <div class="row">
-        <!-- İlgili yazılar buraya -->
+                        <hr class="my-4">
+
+                        <!-- Seçilen Görselleri Gösterme -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">
+                                <i class="bi bi-eye"></i> Seçilen Görselleri Önizle
+                            </h5>
+                            
+                            <!-- Kapak Görseli Önizleme -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Kapak Görseli:</label>
+                                <div id="cover-preview" class="border rounded p-3 bg-light">
+                                    <p class="text-muted mb-0">Henüz görsel seçilmedi</p>
+                                </div>
+                            </div>
+
+                            <!-- Galeri Önizleme -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Galeri Görselleri:</label>
+                                <div id="gallery-preview" class="border rounded p-3 bg-light">
+                                    <p class="text-muted mb-0">Henüz görsel seçilmedi</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Form Butonları -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Test Et
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                                <i class="bi bi-x-circle"></i> Temizle
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Form Verileri (Test için) -->
+                    <div class="mt-4">
+                        <h5 class="mb-3">
+                            <i class="bi bi-code-slash"></i> Form Verileri
+                        </h5>
+                        <pre id="form-data" class="bg-dark text-light p-3 rounded" style="min-height: 100px; max-height: 300px; overflow-y: auto;">Form gönderildiğinde burada görünecek...</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Örnek Görsel Gösterimi -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-display"></i> @seoimages Directive Örneği
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">
+                        Aşağıdaki alana bir görsel yükleyip folder_path'ini girin, görseli görmek için:
+                    </p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="example-folder-path" 
+                               placeholder="Örn: 2025/12/18/resim">
+                        <button class="btn btn-outline-primary" type="button" onclick="loadExampleImage()">
+                            <i class="bi bi-search"></i> Yükle
+                        </button>
+                    </div>
+                    <div id="example-image-container" class="text-center p-4 border rounded bg-light">
+                        <p class="text-muted mb-0">Yukarıdaki alana folder_path girin ve yükle butonuna basın</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    // Form submit handler (test için)
+    $('#test-form').on('submit', function(e) {
+        e.preventDefault();
+        var formData = {
+            cover_image: $('input[name="cover_image"]').val(),
+            gallery: $('input[name="gallery"]').val()
+        };
+        $('#form-data').text(JSON.stringify(formData, null, 2));
+        
+        // Toast notification göster
+        if (typeof window.SeoImagesManager !== 'undefined') {
+            window.SeoImagesManager.showToast('Form verileri konsola yazdırıldı!', 'success');
+        }
+    });
+
+    // Form temizleme
+    function clearForm() {
+        $('input[name="cover_image"]').val('');
+        $('input[name="gallery"]').val('[]');
+        $('#cover-preview').html('<p class="text-muted mb-0">Henüz görsel seçilmedi</p>');
+        $('#gallery-preview').html('<p class="text-muted mb-0">Henüz görsel seçilmedi</p>');
+        $('#form-data').text('Form gönderildiğinde burada görünecek...');
+    }
+
+    // Örnek görsel yükleme
+    function loadExampleImage() {
+        var folderPath = $('#example-folder-path').val();
+        if (!folderPath) {
+            alert('Lütfen bir folder_path girin');
+            return;
+        }
+
+        $('#example-image-container').html('<div class="spinner-border" role="status"></div>');
+
+        // AJAX ile görsel bilgilerini al
+        $.ajax({
+            url: '/seo-images/list',
+            method: 'GET',
+            data: { per_page: 100 },
+            success: function(response) {
+                var image = response.data.find(function(img) {
+                    return img.folder_path === folderPath;
+                });
+                
+                if (image) {
+                    // @seoimages directive kullanarak görseli göster
+                    var html = '<div class="mb-2">';
+                    html += '<p class="small text-muted mb-2">Folder Path: <code>' + image.folder_path + '</code></p>';
+                    html += '<div class="border rounded p-2 bg-white">';
+                    // Görseli @seoimages ile render etmek için AJAX çağrısı yap
+                    $.ajax({
+                        url: '/seo-images/render',
+                        method: 'POST',
+                        data: {
+                            folder_path: folderPath,
+                            options: {
+                                class: 'img-fluid rounded shadow-sm',
+                                alt: image.alt || 'Test görseli'
+                            }
+                        },
+                        success: function(renderResponse) {
+                            $('#example-image-container').html(html + renderResponse.html + '</div></div>');
+                        },
+                        error: function() {
+                            $('#example-image-container').html('<p class="text-danger">Görsel render edilemedi</p>');
+                        }
+                    });
+                } else {
+                    $('#example-image-container').html(
+                        '<p class="text-danger">Görsel bulunamadı. Lütfen geçerli bir folder_path girin.</p>'
+                    );
+                }
+            },
+            error: function() {
+                $('#example-image-container').html('<p class="text-danger">Görsel listesi alınamadı</p>');
+            }
+        });
+    }
+
+    // Input değişikliklerini dinle (preview için)
+    $(document).on('change', 'input[name="cover_image"]', function() {
+        var folderPath = $(this).val();
+        if (folderPath) {
+            $('#cover-preview').html(
+                '<p class="text-success mb-0"><i class="bi bi-check-circle"></i> Seçildi: <code>' + folderPath + '</code></p>'
+            );
+        } else {
+            $('#cover-preview').html('<p class="text-muted mb-0">Henüz görsel seçilmedi</p>');
+        }
+    });
+
+    $(document).on('change', 'input[name="gallery"]', function() {
+        var gallery = $(this).val();
+        try {
+            var paths = JSON.parse(gallery || '[]');
+            if (paths.length > 0) {
+                var html = '<p class="text-success mb-2"><i class="bi bi-check-circle"></i> ' + paths.length + ' görsel seçildi:</p>';
+                html += '<ul class="list-unstyled mb-0">';
+                paths.forEach(function(path) {
+                    html += '<li><code>' + path + '</code></li>';
+                });
+                html += '</ul>';
+                $('#gallery-preview').html(html);
+            } else {
+                $('#gallery-preview').html('<p class="text-muted mb-0">Henüz görsel seçilmedi</p>');
+            }
+        } catch (e) {
+            $('#gallery-preview').html('<p class="text-muted mb-0">Henüz görsel seçilmedi</p>');
+        }
+    });
+</script>
+@endpush
 @endsection
 ```
+
+**3. Route Ekleyin** (`routes/web.php`):
+
+```php
+Route::get('/test-seo-images', function () {
+    return view('test-seo-images');
+})->name('test.seo-images');
+```
+
+**4. Test Sayfasına Erişin:**
+
+Tarayıcınızda şu URL'yi açın:
+```
+http://yourdomain.com/test-seo-images
+```
+
+Bu sayfada şunları test edebilirsiniz:
+- ✅ Tekli görsel seçimi
+- ✅ Çoklu görsel seçimi (galeri)
+- ✅ Görsel yükleme
+- ✅ Görsel önizleme
+- ✅ @seoimages directive kullanımı
+- ✅ Form verilerini görüntüleme
 
 ## 📝 Blade Directive'leri
 
