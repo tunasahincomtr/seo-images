@@ -118,7 +118,7 @@ Bu komut `public/storage` klasörünü `storage/app/public` klasörüne sembolik
 
 `.env` dosyanıza aşağıdaki ayarları ekleyin:
 
-````env
+`````env
 # Storage Disk (varsayılan: public)
 SEO_IMAGES_DISK=public
 
@@ -141,63 +141,200 @@ SEO_IMAGES_CACHE_TTL=3600
 
 ### Adım 1: Layout Dosyanıza Script'leri Ekleyin
 
-Ana layout dosyanızın (`resources/views/layouts/app.blade.php` gibi) `<head>` bölümüne aşağıdakileri ekleyin:
+Ana layout dosyanızın (`resources/views/layouts/app.blade.php` gibi) tam bir örneği:
 
-```blade
+````blade
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <!-- CSRF Token (ÖNEMLİ: AJAX istekleri için gerekli) -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <title>@yield('title', 'Laravel App')</title>
+
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+          crossorigin="anonymous">
 
-    <!-- jQuery (Bootstrap'ten önce yüklenmeli) -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Icons (Opsiyonel) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
     <!-- SEO Images Scripts (HEAD bölümüne ekleyin) -->
     @seoimagesScripts
+
+    <!-- Custom CSS (Opsiyonel) -->
+    @stack('styles')
 </head>
 <body>
-    <!-- İçerik -->
+    <!-- Navigation (Opsiyonel) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url('/') }}">Laravel App</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url('/') }}">Ana Sayfa</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <!-- Modal'ı sayfanın sonuna ekleyin -->
+    <!-- Main Content -->
+    <main class="py-4">
+        <div class="container">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @yield('content')
+        </div>
+    </main>
+
+    <!-- Footer (Opsiyonel) -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center text-muted">
+            <p class="mb-0">&copy; {{ date('Y') }} Laravel App. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <!-- jQuery (Bootstrap'ten önce yüklenmeli) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pm10CIsheKjQhBMd5W5lAMb6gQWO2TO4q8W8URnYQM="
+            crossorigin="anonymous"></script>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"></script>
+
+    <!-- SEO Images Modal (Sayfanın sonuna ekleyin) -->
     @include('seo-images::modal')
+
+    <!-- Custom Scripts (Opsiyonel) -->
+    @stack('scripts')
 </body>
 </html>
-````
+`````
 
 **Önemli Notlar:**
 
 - `@seoimagesScripts` directive'i `<head>` bölümüne eklenmelidir
 - CSRF token meta tag'i mutlaka eklenmelidir (AJAX istekleri için)
+- jQuery Bootstrap'ten önce yüklenmelidir
 - Modal'ı sayfanın sonuna (`</body>` öncesine) ekleyin
+- Bootstrap 5 JS bundle'ı sayfanın sonuna eklenmelidir
 
 ### Adım 2: Form'unuzda Görsel Seçimi Ekleyin
 
+Tam bir form örneği:
+
 ```blade
-<form method="POST" action="{{ route('posts.store') }}">
-    @csrf
+@extends('layouts.app')
 
-    <div class="mb-3">
-        <label>Kapak Görseli</label>
-        @seoinput('cover_image')
+@section('title', 'Yeni Yazı Oluştur')
+
+@section('content')
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-file-earmark-image"></i> Yeni Yazı Oluştur
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
+                    @csrf
+
+                    <!-- Başlık -->
+                    <div class="mb-4">
+                        <label for="title" class="form-label fw-bold">
+                            Başlık <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               class="form-control @error('title') is-invalid @enderror"
+                               id="title"
+                               name="title"
+                               value="{{ old('title') }}"
+                               required>
+                        @error('title')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Kapak Görseli -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-image"></i> Kapak Görseli
+                        </label>
+                        <p class="text-muted small mb-2">Yazınız için bir kapak görseli seçin</p>
+                        @seoinput('cover_image')
+                        @error('cover_image')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Galeri Görselleri -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-images"></i> Galeri Görselleri
+                        </label>
+                        <p class="text-muted small mb-2">Yazınız için birden fazla görsel ekleyebilirsiniz</p>
+                        @seoinput('gallery', 'multiple')
+                        @error('gallery')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- İçerik -->
+                    <div class="mb-4">
+                        <label for="content" class="form-label fw-bold">
+                            İçerik <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control @error('content') is-invalid @enderror"
+                                  id="content"
+                                  name="content"
+                                  rows="10"
+                                  required>{{ old('content') }}</textarea>
+                        @error('content')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Form Butonları -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ route('posts.index') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> İptal
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label>Galeri Görselleri</label>
-        @seoinput('gallery', 'multiple')
-    </div>
-
-    <button type="submit" class="btn btn-primary">Kaydet</button>
-</form>
+</div>
+@endsection
 ```
 
 ### Adım 3: Controller'da Görselleri Kaydedin
@@ -232,30 +369,72 @@ class PostController extends Controller
 
 ### Adım 4: Görselleri Sayfada Gösterin
 
-```blade
-<!-- Tekli görsel -->
-@if($post->cover_image)
-    @seoimages($post->cover_image, [
-        'class' => 'img-fluid rounded shadow',
-        'alt' => $post->title,
-        'loading' => 'eager', // Above the fold için
-        'fetchpriority' => 'high', // Kritik görsel için
-    ])
-@endif
+Detay sayfasında görselleri gösterme örneği:
 
-<!-- Galeri görselleri -->
-@if($post->gallery)
-    <div class="row">
-        @foreach(json_decode($post->gallery, true) as $imagePath)
-            <div class="col-md-4 mb-3">
-                @seoimages($imagePath, [
-                    'class' => 'img-fluid rounded',
-                    'loading' => 'lazy',
-                ])
-            </div>
-        @endforeach
+```blade
+@extends('layouts.app')
+
+@section('title', $post->title)
+
+@section('content')
+<article class="mb-5">
+    <!-- Başlık -->
+    <header class="mb-4">
+        <h1 class="display-4 fw-bold">{{ $post->title }}</h1>
+        <p class="text-muted">
+            <i class="bi bi-calendar"></i> {{ $post->created_at->format('d F Y') }}
+        </p>
+    </header>
+
+    <!-- Kapak Görseli -->
+    @if($post->cover_image)
+        <div class="mb-4">
+            @seoimages($post->cover_image, [
+                'class' => 'img-fluid rounded shadow-lg',
+                'alt' => $post->title,
+                'loading' => 'eager',
+                'fetchpriority' => 'high',
+            ])
+        </div>
+    @endif
+
+    <!-- İçerik -->
+    <div class="content mb-5">
+        {!! nl2br(e($post->content)) !!}
     </div>
-@endif
+
+    <!-- Galeri Görselleri -->
+    @if($post->gallery)
+        <section class="mt-5">
+            <h2 class="h4 mb-4">
+                <i class="bi bi-images"></i> Galeri
+            </h2>
+            <div class="row g-3">
+                @foreach(json_decode($post->gallery, true) as $imagePath)
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body p-2">
+                                @seoimages($imagePath, [
+                                    'class' => 'img-fluid rounded',
+                                    'loading' => 'lazy',
+                                ])
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+</article>
+
+<!-- İlgili Yazılar (Opsiyonel) -->
+<div class="mt-5 pt-4 border-top">
+    <h3 class="h5 mb-3">İlgili Yazılar</h3>
+    <div class="row">
+        <!-- İlgili yazılar buraya -->
+    </div>
+</div>
+@endsection
 ```
 
 ## 📝 Blade Directive'leri
