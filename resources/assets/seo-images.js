@@ -39,6 +39,14 @@
         showToast: function (message, type) {
             type = type || 'success';
 
+            // Check if Bootstrap is available
+            if (typeof bootstrap === 'undefined') {
+                console.warn('Bootstrap 5 is not loaded. Toast notification cannot be shown.');
+                // Fallback to alert
+                alert(message);
+                return;
+            }
+
             // Create toast container if not exists
             var $container = $('#seo-toast-container');
             if ($container.length === 0) {
@@ -906,7 +914,14 @@
                         if (uploadedImages.length > 0) {
                             self.renderImageDetail(uploadedImages[0]);
                         }
-                        $('#seo-images-list-tab').tab('show');
+                        // Bootstrap 5 tab API
+                        if (typeof bootstrap !== 'undefined') {
+                            var listTabEl = document.getElementById('seo-images-list-tab');
+                            if (listTabEl) {
+                                var listTab = bootstrap.Tab.getOrCreateInstance(listTabEl);
+                                listTab.show();
+                            }
+                        }
                         self.showToast(uploadedCount + ' görsel başarıyla yüklendi' + (failedCount > 0 ? ' (' + failedCount + ' başarısız)' : '') + '!', 'success');
                     } else {
                         self.showToast('Hiçbir görsel yüklenemedi. Lütfen dosya boyutlarını ve formatlarını kontrol edin.', 'error');
