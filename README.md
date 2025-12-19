@@ -64,6 +64,7 @@ php artisan storage:link
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>SEO Images Test</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     @seoimagesScripts
 </head>
 <body>
@@ -101,7 +102,7 @@ php artisan storage:link
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @include('seo-images::modal')
 </body>
