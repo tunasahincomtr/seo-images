@@ -47,6 +47,12 @@ php artisan storage:link
 
 ### Test Sayfası
 
+**Önemli:** Test sayfasını kullanmak için `config/seo-images.php` dosyasında middleware ayarını güncelleyin:
+
+```php
+'route_middleware' => ['web'], // 'auth' kaldırıldı
+```
+
 `resources/views/test-seo-images.blade.php` dosyası oluşturun:
 
 ```blade
